@@ -5,7 +5,86 @@
 	<key>bundleid</key>
 	<string>giovanni-alfreDo</string>
 	<key>connections</key>
-	<dict/>
+	<dict>
+		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5B3FBBEA-41DF-4100-9B28-36273BF51512</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Complete this task</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>58F1C106-FCD5-4B74-AA67-075E179C67EB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5B3FBBEA-41DF-4100-9B28-36273BF51512</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Complete this task</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>5B3FBBEA-41DF-4100-9B28-36273BF51512</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6B0359C1-72F2-4810-8E9F-56CE66734083</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>6B0359C1-72F2-4810-8E9F-56CE66734083</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>81A7FDDF-890B-49BE-907D-7ACFD33A1332</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>81A7FDDF-890B-49BE-907D-7ACFD33A1332</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A985A202-AB01-4C63-B783-4D1198BD5D41</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
 	<key>createdby</key>
 	<string>giovanni</string>
 	<key>description</key>
@@ -44,7 +123,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>python3 alfredo.py</string>
+				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+python3 alfredo-get.py "due"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -65,17 +145,225 @@
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python3 alfredo-ops.py ${TaskID}</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>81A7FDDF-890B-49BE-907D-7ACFD33A1332</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Well done.</string>
+				<key>title</key>
+				<string>Task completed! 🎯</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>A985A202-AB01-4C63-B783-4D1198BD5D41</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>TaskID</key>
+					<string>{var:split1}</string>
+					<key>TotalDue</key>
+					<string>{var:split2}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>6B0359C1-72F2-4810-8E9F-56CE66734083</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>delimiter</key>
+				<string>;;</string>
+				<key>trimarguments</key>
+				<true/>
+				<key>variableprefix</key>
+				<string>split</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.split</string>
+			<key>uid</key>
+			<string>5B3FBBEA-41DF-4100-9B28-36273BF51512</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>!1</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>⏳... fetching data</string>
+				<key>script</key>
+				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+python3 alfredo-get.py "today"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Get Todoist tasks</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>A</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>28C94810-BE49-43D5-A1CF-8B1008F6EF69</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
+		<dict>
+			<key>xpos</key>
+			<integer>210</integer>
+			<key>ypos</key>
+			<integer>465</integer>
+		</dict>
+		<key>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</key>
+		<dict>
+			<key>xpos</key>
+			<integer>465</integer>
+			<key>ypos</key>
+			<integer>465</integer>
+		</dict>
 		<key>58F1C106-FCD5-4B74-AA67-075E179C67EB</key>
 		<dict>
 			<key>xpos</key>
-			<integer>405</integer>
+			<integer>470</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>210</integer>
+		</dict>
+		<key>5B3FBBEA-41DF-4100-9B28-36273BF51512</key>
+		<dict>
+			<key>xpos</key>
+			<integer>730</integer>
+			<key>ypos</key>
+			<integer>365</integer>
+		</dict>
+		<key>6B0359C1-72F2-4810-8E9F-56CE66734083</key>
+		<dict>
+			<key>xpos</key>
+			<integer>835</integer>
+			<key>ypos</key>
+			<integer>365</integer>
+		</dict>
+		<key>81A7FDDF-890B-49BE-907D-7ACFD33A1332</key>
+		<dict>
+			<key>note</key>
+			<string>completing intention</string>
+			<key>xpos</key>
+			<integer>970</integer>
+			<key>ypos</key>
+			<integer>335</integer>
+		</dict>
+		<key>A985A202-AB01-4C63-B783-4D1198BD5D41</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1185</integer>
+			<key>ypos</key>
+			<integer>335</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>
