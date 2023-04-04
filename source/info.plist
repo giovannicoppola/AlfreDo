@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>giovanni-alfreDo</string>
+	<key>category</key>
+	<string>myWorkflows</string>
 	<key>connections</key>
 	<dict>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
@@ -58,6 +60,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>6B0359C1-72F2-4810-8E9F-56CE66734083</key>
 		<array>
 			<dict>
@@ -75,6 +90,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>9A30E990-4C96-464E-858F-B386DC26C98C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>A985A202-AB01-4C63-B783-4D1198BD5D41</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -88,13 +113,32 @@
 	<key>createdby</key>
 	<string>giovanni</string>
 	<key>description</key>
-	<string>An Alfred workflow for Todoist</string>
+	<string>an Alfred workflow for Todoist</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
 	<string>alfreDo</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>dueToday</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>9A30E990-4C96-464E-858F-B386DC26C98C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -124,6 +168,7 @@
 				<string></string>
 				<key>script</key>
 				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+export PYTHONPATH="$PWD/lib"
 python3 alfredo-get.py "due"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -153,7 +198,10 @@ python3 alfredo-get.py "due"</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python3 alfredo-ops.py ${TaskID}</string>
+				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+export PYTHONPATH="$PWD/lib"
+
+python3 alfredo-ops.py ${TaskID}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -216,6 +264,10 @@ python3 alfredo-get.py "due"</string>
 			<dict>
 				<key>delimiter</key>
 				<string>;;</string>
+				<key>discardemptyarguments</key>
+				<false/>
+				<key>outputas</key>
+				<integer>0</integer>
 				<key>trimarguments</key>
 				<true/>
 				<key>variableprefix</key>
@@ -257,13 +309,14 @@ python3 alfredo-get.py "due"</string>
 				<string>⏳... fetching data</string>
 				<key>script</key>
 				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+export PYTHONPATH="$PWD/lib"
 python3 alfredo-get.py "today"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string></string>
+				<string>due today</string>
 				<key>title</key>
 				<string>Get Todoist tasks</string>
 				<key>type</key>
@@ -292,9 +345,9 @@ python3 alfredo-get.py "today"</string>
 				<key>hotkey</key>
 				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1835008</integer>
+				<integer>0</integer>
 				<key>hotstring</key>
-				<string>A</string>
+				<string></string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -309,6 +362,21 @@ python3 alfredo-get.py "today"</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<false/>
+				<key>triggerid</key>
+				<string>dueToday</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -317,55 +385,78 @@ python3 alfredo-get.py "today"</string>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
 		<dict>
 			<key>xpos</key>
-			<integer>210</integer>
+			<real>210</real>
 			<key>ypos</key>
-			<integer>465</integer>
+			<real>465</real>
 		</dict>
 		<key>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</key>
 		<dict>
 			<key>xpos</key>
-			<integer>465</integer>
+			<real>470</real>
 			<key>ypos</key>
-			<integer>465</integer>
+			<real>460</real>
 		</dict>
 		<key>58F1C106-FCD5-4B74-AA67-075E179C67EB</key>
 		<dict>
 			<key>xpos</key>
-			<integer>470</integer>
+			<real>470</real>
 			<key>ypos</key>
-			<integer>210</integer>
+			<real>210</real>
 		</dict>
 		<key>5B3FBBEA-41DF-4100-9B28-36273BF51512</key>
 		<dict>
 			<key>xpos</key>
-			<integer>730</integer>
+			<real>730</real>
 			<key>ypos</key>
-			<integer>365</integer>
+			<real>365</real>
+		</dict>
+		<key>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</key>
+		<dict>
+			<key>xpos</key>
+			<real>210</real>
+			<key>ypos</key>
+			<real>610</real>
 		</dict>
 		<key>6B0359C1-72F2-4810-8E9F-56CE66734083</key>
 		<dict>
 			<key>xpos</key>
-			<integer>835</integer>
+			<real>835</real>
 			<key>ypos</key>
-			<integer>365</integer>
+			<real>365</real>
 		</dict>
 		<key>81A7FDDF-890B-49BE-907D-7ACFD33A1332</key>
 		<dict>
 			<key>note</key>
-			<string>completing intention</string>
+			<string>completing task</string>
 			<key>xpos</key>
-			<integer>970</integer>
+			<real>970</real>
 			<key>ypos</key>
-			<integer>335</integer>
+			<real>335</real>
+		</dict>
+		<key>9A30E990-4C96-464E-858F-B386DC26C98C</key>
+		<dict>
+			<key>xpos</key>
+			<real>1190</real>
+			<key>ypos</key>
+			<real>195</real>
 		</dict>
 		<key>A985A202-AB01-4C63-B783-4D1198BD5D41</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1185</integer>
+			<real>1185</real>
 			<key>ypos</key>
-			<integer>335</integer>
+			<real>335</real>
 		</dict>
 	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variables</key>
+	<dict>
+		<key>TOKEN</key>
+		<string>f919fc636de42e7966cfa27c51742e6e0a1e4ef9</string>
+	</dict>
+	<key>version</key>
+	<string></string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

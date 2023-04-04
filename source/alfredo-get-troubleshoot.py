@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import requests
+from lib import requests
 import json
-from requests.structures import CaseInsensitiveDict
+from lib.requests.structures import CaseInsensitiveDict
 from datetime import datetime
 import sys
 
