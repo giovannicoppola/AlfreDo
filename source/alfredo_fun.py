@@ -4,7 +4,7 @@ import sys
 
 
 # AlfreDo – a Todoist workflow
-# Chappaqua – Partly cloudy ⛅️  🌡️+31°F (feels +28°F, 82%) 🌬️↘4mph 🌗 2022-01-25 Tue 9:05AM
+# Partly cloudy ⛅️  🌡️+31°F (feels +28°F, 82%) 🌬️↘4mph 🌗 2022-01-25 Tue 9:05AM
 
 def log(s, *args):
     if args:

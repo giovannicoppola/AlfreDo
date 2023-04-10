@@ -21,6 +21,29 @@
 				<false/>
 			</dict>
 		</array>
+		<key>42727175-B99E-4935-B6AB-1D288B48A8DE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3A91AE7F-E377-4B26-B0C4-531362B82FCA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>5B3FBBEA-41DF-4100-9B28-36273BF51512</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Complete this task</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</key>
 		<array>
 			<dict>
@@ -38,6 +61,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>AAFDA2F8-6A4E-42BB-B809-461F6E2D9F6A</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>5B3FBBEA-41DF-4100-9B28-36273BF51512</string>
 				<key>modifiers</key>
 				<integer>131072</integer>
@@ -52,19 +85,6 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>6B0359C1-72F2-4810-8E9F-56CE66734083</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -124,6 +144,82 @@
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
+				<string>allTasks</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>3A91AE7F-E377-4B26-B0C4-531362B82FCA</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:allTasksKeyword}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+export PYTHONPATH="$PWD/lib"
+python3 alfredo-get.py "all" "$1"
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Get all Todoist tasks</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>inboundconfig</key>
+			<dict>
+				<key>externalid</key>
+				<string>allTasks</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>42727175-B99E-4935-B6AB-1D288B48A8DE</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
 				<string>dueToday</string>
 				<key>passinputasargument</key>
 				<false/>
@@ -143,7 +239,7 @@
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
@@ -155,11 +251,11 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>!2</string>
+				<string>{var:overdueKeyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
-				<true/>
+				<false/>
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
@@ -169,7 +265,7 @@
 				<key>script</key>
 				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
 export PYTHONPATH="$PWD/lib"
-python3 alfredo-get.py "due"</string>
+python3 alfredo-get.py "due" "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -183,12 +279,36 @@ python3 alfredo-get.py "due"</string>
 				<key>withspace</key>
 				<true/>
 			</dict>
+			<key>inboundconfig</key>
+			<dict>
+				<key>externalid</key>
+				<string>overdue</string>
+			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>58F1C106-FCD5-4B74-AA67-075E179C67EB</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>overdue</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>AAFDA2F8-6A4E-42BB-B809-461F6E2D9F6A</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -296,7 +416,7 @@ python3 alfredo-ops.py ${TaskID}</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>!1</string>
+				<string>{var:dueTodayKeyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -310,7 +430,7 @@ python3 alfredo-ops.py ${TaskID}</string>
 				<key>script</key>
 				<string>export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
 export PYTHONPATH="$PWD/lib"
-python3 alfredo-get.py "today"</string>
+python3 alfredo-get.py "today" "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -323,6 +443,11 @@ python3 alfredo-get.py "today"</string>
 				<integer>5</integer>
 				<key>withspace</key>
 				<true/>
+			</dict>
+			<key>inboundconfig</key>
+			<dict>
+				<key>externalid</key>
+				<string>dueToday</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -362,21 +487,6 @@ python3 alfredo-get.py "today"</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>availableviaurlhandler</key>
-				<false/>
-				<key>triggerid</key>
-				<string>dueToday</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
-			<key>uid</key>
-			<string>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -389,8 +499,26 @@ python3 alfredo-get.py "today"</string>
 			<key>ypos</key>
 			<real>465</real>
 		</dict>
+		<key>3A91AE7F-E377-4B26-B0C4-531362B82FCA</key>
+		<dict>
+			<key>xpos</key>
+			<real>725</real>
+			<key>ypos</key>
+			<real>40</real>
+		</dict>
+		<key>42727175-B99E-4935-B6AB-1D288B48A8DE</key>
+		<dict>
+			<key>note</key>
+			<string>all tasks</string>
+			<key>xpos</key>
+			<real>470</real>
+			<key>ypos</key>
+			<real>40</real>
+		</dict>
 		<key>53FCDE38-AD23-4C03-8FCE-26B2F4B0B273</key>
 		<dict>
+			<key>note</key>
+			<string>Due TODAY</string>
 			<key>xpos</key>
 			<real>470</real>
 			<key>ypos</key>
@@ -398,10 +526,12 @@ python3 alfredo-get.py "today"</string>
 		</dict>
 		<key>58F1C106-FCD5-4B74-AA67-075E179C67EB</key>
 		<dict>
+			<key>note</key>
+			<string>overdue</string>
 			<key>xpos</key>
 			<real>470</real>
 			<key>ypos</key>
-			<real>210</real>
+			<real>240</real>
 		</dict>
 		<key>5B3FBBEA-41DF-4100-9B28-36273BF51512</key>
 		<dict>
@@ -409,13 +539,6 @@ python3 alfredo-get.py "today"</string>
 			<real>730</real>
 			<key>ypos</key>
 			<real>365</real>
-		</dict>
-		<key>5C5DDC49-4F8C-4CFD-B1FE-67CBEBA62CEA</key>
-		<dict>
-			<key>xpos</key>
-			<real>210</real>
-			<key>ypos</key>
-			<real>610</real>
 		</dict>
 		<key>6B0359C1-72F2-4810-8E9F-56CE66734083</key>
 		<dict>
@@ -447,14 +570,122 @@ python3 alfredo-get.py "today"</string>
 			<key>ypos</key>
 			<real>335</real>
 		</dict>
+		<key>AAFDA2F8-6A4E-42BB-B809-461F6E2D9F6A</key>
+		<dict>
+			<key>xpos</key>
+			<real>710</real>
+			<key>ypos</key>
+			<real>240</real>
+		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
-	<array/>
-	<key>variables</key>
-	<dict>
-		<key>TOKEN</key>
-		<string>f919fc636de42e7966cfa27c51742e6e0a1e4ef9</string>
-	</dict>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>!1</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Due Today Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>dueTodayKeyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>!2</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Overdue Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>overdueKeyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>!3</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>All Tasks Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>allTasksKeyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Login into your account, then copy at https://readwise.io/access_token</string>
+			<key>label</key>
+			<string>Todoist token</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>TOKEN</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>30</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>in days</string>
+			<key>label</key>
+			<string>Refresh rate</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>RefreshRate</string>
+		</dict>
+	</array>
 	<key>version</key>
 	<string></string>
 	<key>webaddress</key>
