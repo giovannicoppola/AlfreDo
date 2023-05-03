@@ -406,7 +406,7 @@ def reschMenu(customDays):
     
     if customDays == '':
         MYOUTPUT["items"].extend([{
-                        "title": f"Reschedule to today 􀧞 {getNewDate(0)} 🔥",
+                        "title": f"Reschedule to today 🗓️ {getNewDate(0)} 🔥",
                         "subtitle": taskContent,
                         "arg": 0,
                         "variables" : {
@@ -416,7 +416,7 @@ def reschMenu(customDays):
                             }
                         },
                         {
-                        "title": f"Reschedule to tomorrow 􀧞 {getNewDate(1)} 🧨",
+                        "title": f"Reschedule to tomorrow 🗓️ {getNewDate(1)} 🧨",
                         "subtitle": taskContent,
                         "arg": 1,
                         "variables" : {
@@ -426,7 +426,7 @@ def reschMenu(customDays):
                             }
                         },
                         {
-                        "title": f"Reschedule in a week 􀧞 {getNewDate(7)} 🍹",
+                        "title": f"Reschedule in a week 🗓️ {getNewDate(7)} 🍹",
                         "subtitle": taskContent,
                         "arg": 7,
                         "variables" : {
@@ -436,7 +436,7 @@ def reschMenu(customDays):
                             }
                         },
                         {
-                        "title": f"Reschedule in a month 􀧞 {getNewDate(30)} 🏖️",
+                        "title": f"Reschedule in a month 🗓️ {getNewDate(30)} 🏖️",
                         "subtitle": taskContent,
                         "arg": 30,
                         "variables" : {
@@ -456,8 +456,12 @@ def reschMenu(customDays):
         elif letter == 'm':
             num *= 30
         log(f'Valid input:{num}')
+        if num ==1:
+            dayString = 'day'
+        else:
+            dayString = 'days'
         MYOUTPUT["items"].append({
-                        "title": f"Reschedule in {num:,} days 􀧞 {getNewDate(num)}",
+                        "title": f"Reschedule in {num:,} {dayString} 🗓️ {getNewDate(num)}",
                         "subtitle": taskContent,
                         "arg": num,
                         "variables" : {
@@ -495,7 +499,7 @@ def dueMenu(customDays,inputThrough):
     
     if customDays == '':
         MYOUTPUT["items"].extend([{
-                        "title": f"Due today 􀧞 {getNewDate(0)} 🔥",
+                        "title": f"Due today 🗓️ {getNewDate(0)} 🔥",
                         "subtitle": '',
                         "arg": f"{inputThroughF}0d ",
                         "variables" : {
@@ -505,7 +509,7 @@ def dueMenu(customDays,inputThrough):
                             }
                         },
                         {
-                        "title": f"Due tomorrow 􀧞 {getNewDate(1)} 🧨",
+                        "title": f"Due tomorrow 🗓️ {getNewDate(1)} 🧨",
                         "subtitle": '',
                         "arg": f"{inputThroughF}1d ",
                         "variables" : {
@@ -515,7 +519,7 @@ def dueMenu(customDays,inputThrough):
                             }
                         },
                         {
-                        "title": f"Due in a week 􀧞 {getNewDate(7)} 🍹",
+                        "title": f"Due in a week 🗓️ {getNewDate(7)} 🍹",
                         "subtitle": '',
                         "arg": f"{inputThroughF}7d ",
                         "variables" : {
@@ -525,7 +529,7 @@ def dueMenu(customDays,inputThrough):
                             }
                         },
                         {
-                        "title": f"Due in a month 􀧞 {getNewDate(30)} 🏖️",
+                        "title": f"Due in a month 🗓️ {getNewDate(30)} 🏖️",
                         "subtitle": '',
                         "arg": f"{inputThroughF}30d ",
                         "variables" : {
@@ -545,8 +549,12 @@ def dueMenu(customDays,inputThrough):
         elif letter == 'm':
             num *= 30
         log(f'Valid input:{num}')
+        if num ==1:
+            dayString = 'day'
+        else:
+            dayString = 'days'
         MYOUTPUT["items"].append({
-                        "title": f"Due in {num:,} days 􀧞 {getNewDate(num)}",
+                        "title": f"Due in {num:,} {dayString} 🗓️ {getNewDate(num)}",
                         "subtitle": '',
                         "arg": f"{inputThroughF}{num}d ",
                         "variables" : {

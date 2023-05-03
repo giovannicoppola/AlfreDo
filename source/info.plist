@@ -165,7 +165,7 @@
 				<key>modifiers</key>
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
-				<string>reschedule this task 􀚁</string>
+				<string>reschedule this task ↪️</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -175,7 +175,7 @@
 				<key>modifiers</key>
 				<integer>131072</integer>
 				<key>modifiersubtext</key>
-				<string>Complete this task! 􀃲</string>
+				<string>Complete this task! ✅</string>
 				<key>vitoclose</key>
 				<true/>
 			</dict>
@@ -226,7 +226,7 @@
 				<key>modifiers</key>
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
-				<string>reschedule this task 􀚁</string>
+				<string>reschedule this task ↪️</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -236,7 +236,7 @@
 				<key>modifiers</key>
 				<integer>131072</integer>
 				<key>modifiersubtext</key>
-				<string>Complete this task! 􀃲</string>
+				<string>Complete this task! ✅</string>
 				<key>vitoclose</key>
 				<true/>
 			</dict>
@@ -259,7 +259,7 @@
 				<key>modifiers</key>
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
-				<string>reschedule this task 􀚁</string>
+				<string>reschedule this task ↪️</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -279,7 +279,7 @@
 				<key>modifiers</key>
 				<integer>131072</integer>
 				<key>modifiersubtext</key>
-				<string>Complete this task! 􀃲</string>
+				<string>Complete this task! ✅</string>
 				<key>vitoclose</key>
 				<true/>
 			</dict>
@@ -787,7 +787,7 @@ python3 alfredo-query.py "due" "$1"</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Get Todoist tasks</string>
+				<string>Get overdue Todoist tasks</string>
 				<key>type</key>
 				<integer>5</integer>
 				<key>withspace</key>
@@ -1022,7 +1022,7 @@ python3 alfredo-query.py "today" "$1"</string>
 				<key>subtext</key>
 				<string>due today</string>
 				<key>title</key>
-				<string>Get Todoist tasks</string>
+				<string>Get Todoist tasks due today</string>
 				<key>type</key>
 				<integer>5</integer>
 				<key>withspace</key>
@@ -1517,7 +1517,7 @@ python3 alfredo_ops.py "parse" "$1"</string>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string>Use @ to enter tags, # to assign to a project (default: Inbox), due: to add due date, 􀆝-􀅇 to create</string>
+				<string>Use @ to enter tags, # to assign to a project (default: Inbox), due: to add due date, ⇧↩️ to create</string>
 				<key>title</key>
 				<string>Create new Todoist task</string>
 				<key>type</key>
@@ -1812,7 +1812,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>colorindex</key>
 			<integer>2</integer>
 			<key>note</key>
-			<string>create task 􀣙</string>
+			<string>create task 🗓️</string>
 			<key>xpos</key>
 			<real>1570</real>
 			<key>ypos</key>
@@ -1830,7 +1830,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>note</key>
-			<string>complete task 􀃲</string>
+			<string>complete task ✅</string>
 			<key>xpos</key>
 			<real>1320</real>
 			<key>ypos</key>
