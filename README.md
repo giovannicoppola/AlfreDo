@@ -1,14 +1,12 @@
 # AlfreDo
- Alfred for Todoist
+An Alfred Workflow for [Todoist](https://todoist.com/)
 
-
-## An Alfred Workflow for [Todoist](https://todoist.com/)
 <a href="https://github.com/giovannicoppola/alfreDO/releases/latest/">
 <img alt="Downloads"
 src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color=purple&label=Downloads"><br/>
 </a>
 
-![](images/alfreDo.png)
+![](images/CreateTask.gif)
 
 <!-- MarkdownTOC autolink="true" bracket="round" depth="3" autoanchor="true" -->
 
@@ -25,8 +23,8 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 <h1 id="motivation">Motivation ✅</h1>
 
-- Quickly list, search, and open your Readwise highlights
-- Add new highlights to your account through Alfred
+- Quickly list, search, and act on your Todoist tasks 
+- Add new tasks to Todoist through Alfred
 
 
 
@@ -34,45 +32,48 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 ### Needed
 - Alfred 5 with Powerpack license
-- A [Readwise](https://readwise.io) license
+- A [Todoist](https://todoist.com/) account
 - Python3 (howto [here](https://www.freecodecamp.org/news/python-version-on-mac-update/))
-- Download `alfred-readwise` [latest release](https://github.com/giovannicoppola/alfred-readwise/releases/latest)
+- Download `AlfreDo` [latest release](https://github.com/giovannicoppola/alfredo/releases/latest)
 
 
 
 ## Default settings 
-- In Alfred, open the 'Configure Workflow' menu in `alfred-readwise` preferences
-	- set the keyword for the workflow (default: `!r`)
-	- set the keyword to force refresh (default: `readwise:refresh`)
-	- set the Readwise API token (login into your account, then copy it [here](https://readwise.io/access_token))
-	- set what to show in results: `books`, `tweets`, `supplementals`, `articles`, `podcasts`
-	- set refresh rate (in days). Default: `30`
-	- set 'book' name from highlights entered via Alfred. Default: `Highlights from Alfred`
-	- set search scope:
-		- `Highlight`: search highlight text only
-		- `Book`: search book titles only
-		- `Both` (default): search across highlights and book titles
+- In Alfred, open the 'Configure Workflow' menu in `AlfreDo` preferences
+ 	- set the Todoist API token (login into your account, then generate it [here](https://todoist.com/app/settings/integrations/developer))
+- *Optional*:	
+	- set the keyword (or hotkey) to show: 
+		1. Tasks due today (default: `!1`)
+		2. Overdue (default: `!2`)
+		3. All tasks (default: `!3`)
+	- set the keyword (or hotkey) to force-refresh (default: `todoist::refresh`)
+	- set the keyword (or hotkey) to create a new task (default: `!!!`)
+	- set refresh rate (in days). Default: `1`
+		- Recommended `0` (refresh every time) or `1` if you use Todoist often from browser, mobile etc. 
+		- Database is automatically refreshed when a task is created, completed, or rescheduled.
+		- Refresh can be forced using a keyword (default: `todoist::refresh`) or hotkey.
+	- show Karma daily and weekly goals? Default: `yes`
 
 
 <h1 id="usage">Basic Usage 📖</h1>
 
-## Searching your Readwise database 🔍
-- launch with keyword (default: `!r`), or custom hotkey
-- standard search will be through highlight text and book titles. Multiple word (fragments) supported
-- typing `#` will prompt a label search which can be added to the standard search, multiple labels supported
-	- `enter` ↩️ will show the highlight in large font and copy to clipboard
-	- `command-enter` ⌘↩️ will open the source URL if available (typically for tweets)
-	- `ctrl-enter` ^↩️ will open the highlight on Readwise
-	- `shift-ctrl-enter` ⇧^↩️ will open all highlights from that book on Readwise
+## Searching your tasks 🔍
+- launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, or 3) all tasks
+- Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project. 
+- Once a task is selected, you can do one of three things: 
+	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/)
+	- `shift-enter` ⇧↩️ will complete the task
+	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+	
 
-
-## Entering new highlights ⭐
-- Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Readwise highlight`. The corresponding text will be assigned to a 'book' titled as set in `alfred-readwise` preferences (default: `Highlights from Alfred`).
+## Creating new tasks ⭐
+- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
+- Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 
 
 ## Database refresh 🔄
-- will occur according to the rate in days set in `alfred-readwise` preferences, or...
-	- `readwise:refresh` to force database refresh
+- will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, or rescheduled, or...
+	- `todoist::refresh` to force database refresh
 
 
 <h1 id="known-issues">Limitations & known issues ⚠️</h1>
@@ -84,13 +85,16 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 <h1 id="acknowledgments">Acknowledgments 😀</h1>
 
 - Thanks to the [Alfred forum](https://www.alfredforum.com) community!
-- Icons: 
-	https://www.flaticon.com/free-icon/overdue_6534474?term=overdue&page=1&position=18&origin=search&related_id=6534474
-	https://www.flaticon.com/free-icon/calendar_6816638?term=today&page=1&position=34&origin=search&related_id=6816638
+- Icons from [Flaticon](https://www.flaticon.com/): 
+	- https://www.flaticon.com/free-icon/overdue_6534474
+	- https://www.flaticon.com/free-icon/calendar_6816638
+	- https://www.flaticon.com/free-icon/project-management_4844342
+	- https://www.flaticon.com/free-icon/task_2098402
+	
 	
 <h1 id="changelog">Changelog 🧰</h1>
 
-- 04-04-2023: version 0.1
+- 05-03-2023: version 0.1
 
 
 <h1 id="feedback">Feedback 🧐</h1>
