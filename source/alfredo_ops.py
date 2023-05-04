@@ -330,28 +330,28 @@ def parseNewTask (myInput):
     
     myTagString = ",".join(myTags)
     if myTagString:
-        myTagStringF = f"􀋡{myTagString}"
+        myTagStringF = f"🏷️{myTagString}"
     else:
         myTagStringF = ''
     
     try:
-        dueStringF = f"􀮝 due:{dueString}"
+        dueStringF = f"🗓️ due:{dueString}"
     except NameError:
         dueString = ""
         dueStringF = ""
 
     try:
-        myProjStringF = f"􀼏{taskProjectName}"
+        myProjStringF = f"📋{taskProjectName}"
         
     except NameError:
         taskProjectName = "#Inbox"
-        myProjStringF = f"􀼏{taskProjectName}"
+        myProjStringF = f"📋{taskProjectName}"
         taskProjectID = get_project_id (myProjects,taskProjectName[1:])
 
 
     MYOUTPUT["items"].append({
                 "title": MY_TASK_TEXT,
-                "subtitle": f"{myProjStringF} {myTagStringF} {dueStringF} 􀆝-􀅇 to create",
+                "subtitle": f"{myProjStringF} {myTagStringF} {dueStringF} ⇧↩️ to create",
                 "arg": myInput,
                 "variables" : {
                 "myTaskText": MY_TASK_TEXT,

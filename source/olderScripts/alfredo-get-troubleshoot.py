@@ -7,7 +7,7 @@ from datetime import datetime
 import sys
 
 # AlfreDo – a Todoist workflow
-# Chappaqua – Sunny ☀️   🌡️+18°F (feels +11°F, 59%) 🌬️↘7mph 🌗 2022-01-26 Wed 8:36AM
+# Sunny ☀️   🌡️+18°F (feels +11°F, 59%) 🌬️↘7mph 🌗 2022-01-26 Wed 8:36AM
 # new version of `alfredo-old` using the sync API
 
 
