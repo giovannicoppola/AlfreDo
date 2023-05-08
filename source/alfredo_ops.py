@@ -102,7 +102,7 @@ def completeTask (myTaskID):
     data = {
         "commands": json.dumps([
             {
-                "type": "item_complete",
+                "type": "item_close",
                 "uuid": MY_UUID,
                 "args": {
                     "id": myTaskID
