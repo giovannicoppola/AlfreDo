@@ -555,7 +555,7 @@ python3 alfredo_ops.py "reschedule" "$1"</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>{var:allTasksKeyword}</string>
+				<string>{var:alltasks_keyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -766,7 +766,7 @@ python3 alfredo_ops.py "findDate" "$myTaskID" "$1"</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>{var:overdueKeyword}</string>
+				<string>{var:overdue_keyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -1001,7 +1001,7 @@ python3 alfredo_ops.py "complete" "$myTaskID"</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>{var:dueTodayKeyword}</string>
+				<string>{var:duetoday_keyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -1973,7 +1973,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>
-			<string>dueTodayKeyword</string>
+			<string>duetoday_keyword</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1994,7 +1994,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>
-			<string>overdueKeyword</string>
+			<string>overdue_keyword</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -2015,7 +2015,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>
-			<string>allTasksKeyword</string>
+			<string>alltasks_keyword</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -2103,7 +2103,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>

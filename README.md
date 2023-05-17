@@ -1,5 +1,6 @@
 # AlfreDo
-An Alfred Workflow for [Todoist](https://todoist.com/)
+An Alfred Workflow for [Todoist](https://todoist.com/). 
+NOTE: not created by, affiliated with, or supported by Doist.
 
 <a href="https://github.com/giovannicoppola/alfreDO/releases/latest/">
 <img alt="Downloads"
