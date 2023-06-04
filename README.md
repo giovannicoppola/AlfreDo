@@ -92,6 +92,8 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	- https://www.flaticon.com/free-icon/calendar_6816638
 	- https://www.flaticon.com/free-icon/project-management_4844342
 	- https://www.flaticon.com/free-icon/task_2098402
+	- https://www.flaticon.com/free-icon/check_10308323
+	- https://www.flaticon.com/free-icon/bowler-hat_3345848
 	
 	
 <h1 id="changelog">Changelog 🧰</h1>

@@ -40,11 +40,21 @@ def get_project_name(projects, id):
             return project["name"]
     return None
 
+def get_parent_project_name(sections, projects, id):
+    for section in sections:
+        if section["id"] == id:
+            myProjectID = section["project_id"]
+    get_project_name (projects,myProjectID)
+    return None
+
+
 def get_project_id(projects, nameP):
     for project in projects:
         if project["name"] == nameP:
             return project["id"]
     return None
+
+
 
 def fetchLabels(toShow):
      # getting all the tags (and counts) from the current subset of tasks
@@ -67,6 +77,36 @@ def fetchLabels(toShow):
     myLabels = ['@' + s for s in myLabels]
     #log (myLabelsAll)
     return label_counts, myLabels
+
+def fetchSections (toShow,mySections,myProjects):
+     # # getting all the projects (and counts) from the current subset of tasks
+    section_counts = {}
+    section_parentProjects = {}
+    for item in toShow:
+        if item['section_id']:
+            sectN = [x['name'] for x in mySections if x['id'] == item['section_id']][0]
+            sectpID = [x['project_id'] for x in mySections if x['id'] == item['section_id']][0]
+            parentProjectName = get_project_name(myProjects,sectpID)
+            section_parentProjects[sectN] = parentProjectName
+            if sectN in section_counts:
+                section_counts[sectN] += 1
+            else:
+                section_counts[sectN] = 1
+    
+    def get_count(key):
+        return section_counts[key]
+
+    mySectionList = list(section_counts.keys())
+    # Sort the myLabels list based on the count associated with each label
+    mySectionList = sorted(mySectionList, key=get_count, reverse=True)
+
+    
+    
+    mySectionList = ['^' + s for s in mySectionList]
+    
+    #log (project_counts)
+    return section_counts,mySectionList,section_parentProjects
+
 
 def fetchProjects (toShow,myProjects):
      # # getting all the projects (and counts) from the current subset of tasks
@@ -148,10 +188,11 @@ def readTodoistData ():
     myTasks=mydata['items']
     myProjects=mydata['projects']
     myStats=mydata['stats']
+    mySections=mydata['sections']
     myUser=mydata['user']
-    return myTasks, myProjects, myStats, myUser
+    return myTasks, mySections, myProjects, myStats, myUser
 
-def createNewTask (taskContent,taskLabels,taskProjectID,myDueDate):
+def createNewTask (taskContent,taskLabels,taskProjectID,taskSectionID,myDueDate):
     
     url = 'https://api.todoist.com/sync/v9/sync'
     MY_UUID = generate_uuid()
@@ -172,6 +213,7 @@ def createNewTask (taskContent,taskLabels,taskProjectID,myDueDate):
                     "content": taskContent,
                     "labels": taskLabels,
                     "project_id": taskProjectID,
+                    "section_id": taskSectionID,
                     "due": {"date": myDueDate}
                 }
             }
@@ -192,10 +234,10 @@ def createNewTask (taskContent,taskLabels,taskProjectID,myDueDate):
 
 def parseNewTask (myInput):
     # fetching label data from todoist
-    allTasks, myProjects, myStats, myUser = readTodoistData()
+    allTasks, mySections, myProjects, myStats, myUser = readTodoistData()
     label_counts, myLabelsAll = fetchLabels(allTasks)
     project_counts,myProjectListAll = fetchProjects(allTasks,myProjects)
-
+    section_counts,mySectionListAll, section_ParentProjects = fetchSections(allTasks,mySections,myProjects)
     myTags = []
     
     
@@ -215,6 +257,10 @@ def parseNewTask (myInput):
             taskProjectName = myInputItem
             taskProjectID = get_project_id (myProjects,myInputItem[1:])
             
+        elif myInputItem.strip() in mySectionListAll: # is this a real section? 
+            taskSectionName = myInputItem
+            taskSectionID = get_project_id (mySections,myInputItem[1:])
+
         elif myInputItem.startswith('@'): #user trying to add a label
             
             mySubset = [i for i in myLabelsAll if myInputItem.casefold() in i.casefold()]
@@ -300,17 +346,65 @@ def parseNewTask (myInput):
             print (json.dumps(MYOUTPUT))
             exit()
         
-        
+        elif myInputItem.startswith('^'): #user trying to add a section
+            
+            mySubset = [i for i in mySectionListAll if myInputItem.casefold() in i.casefold()]
+            
+            
+            # adding a complete project name if the user selects it from the list
+            if mySubset:
+                myInputElements.remove(myInputItem)
+                myInput = " ".join(myInputElements)
+                
+                for thisSect in mySubset:
+                    if myInput:
+                        MY_ARG = f"{myInput} {thisSect} "
+                    else:
+                        MY_ARG = f"{thisSect} "
+                    MYOUTPUT["items"].append({
+                    "title": f"{thisSect} ({section_ParentProjects[thisSect[1:]]}, {section_counts[thisSect[1:]]})",
+                    "subtitle": MY_ARG,
+                    "arg": MY_ARG,
+                    "variables" : {
+                        
+                        },
+                    "icon": {
+                            "path": f"icons/section.png"
+                        }
+                    })
+            else:
+                MYOUTPUT["items"].append({
+                "title": "no section matching",
+                "subtitle": "try another query?",
+                "arg": "",
+                 "variables" : {
+                    
+                    "myArg": MY_INPUT+" "
+                    },
+                "icon": {
+                        "path": f"icons/Warning.png"
+                    }
+                })
+            print (json.dumps(MYOUTPUT))
+            exit()
         
         elif myInputItem.startswith ('due:'):
             # check first if there is a due date already 
             patternDue = r'due:(\d+)d'
             matchDue = re.search(patternDue, myInputItem)
+            matchINT = re.match(r'^due:(\d{4}-\d{2}-\d{2})$', myInputItem)
+            matchINThour = re.match(r'^due:(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})$',myInputItem)
+
                         
             if matchDue:
                dueString = getNewDate (int(matchDue.group(1)),F=False)
-               
-               
+               log (dueString)
+            elif matchINT:
+                dueString = matchINT.group(1)
+                log (dueString)
+            elif matchINThour:
+                dueString = matchINThour.group(1)
+                log (dueString)                            
             else:
                 customDays = myInputItem.split(':')[1]
                 myInput = " ".join(myInputElements)
@@ -322,7 +416,7 @@ def parseNewTask (myInput):
     myTaskElements = myInput.split()
     
     for xxx in myTaskElements[:]:
-        if xxx.startswith('@') or xxx.startswith('#') or xxx.startswith('due:'):
+        if xxx.startswith('@') or xxx.startswith('#') or xxx.startswith('^') or xxx.startswith('due:'):
             myTaskElements.remove(xxx)
         
     
@@ -341,22 +435,34 @@ def parseNewTask (myInput):
         dueStringF = ""
 
     try:
+        mySectStringF = f"🧩 section:{taskSectionName}"
+    except NameError:
+        mySectString = ""
+        mySectStringF = ""
+        taskSectionID = None
+    try:
         myProjStringF = f"📋{taskProjectName}"
         
     except NameError:
-        taskProjectName = "#Inbox"
-        myProjStringF = f"📋{taskProjectName}"
-        taskProjectID = get_project_id (myProjects,taskProjectName[1:])
+        if mySectStringF:
+            taskProjectName = section_ParentProjects[taskSectionName[1:]]
+            myProjStringF = f"📋{taskProjectName}"
+            taskProjectID = get_project_id (myProjects,taskProjectName[1:])
+        else:
+            taskProjectName = "#Inbox"
+            myProjStringF = f"📋{taskProjectName}"
+            taskProjectID = get_project_id (myProjects,taskProjectName[1:])
 
 
     MYOUTPUT["items"].append({
                 "title": MY_TASK_TEXT,
-                "subtitle": f"{myProjStringF} {myTagStringF} {dueStringF} ⇧↩️ to create",
+                "subtitle": f"{myProjStringF} {mySectStringF} {myTagStringF} {dueStringF} ⇧↩️ to create",
                 "arg": myInput,
                 "variables" : {
                 "myTaskText": MY_TASK_TEXT,
                 "myTagString": myTagString,
                 "myProjectID": taskProjectID,
+                "mySectionID": taskSectionID,
                 "myDueDate": dueString
                     },
                 "icon": {
@@ -366,6 +472,43 @@ def parseNewTask (myInput):
    
     print (json.dumps(MYOUTPUT))
     
+
+def handleINTdate(dateString):
+    """
+    this function takes a date string in international format and returns 1) the number of days to that date, and 2) a string with the date in long format
+    """
+    # Convert the date string to a datetime object
+    date = datetime.strptime(dateString, "%Y-%m-%d").date()
+
+    # Get the current date
+    today = datetime.now().date()
+
+    # Calculate the number of days between the current date and the given date
+    daysTo = (date - today).days
+
+    # Format the date in the desired format
+    formatted_date = date.strftime("%A, %B %d, %Y")
+
+    return daysTo,formatted_date
+
+def handleINTdateHour(dateString):
+    """
+    this function takes a date string in international format (plus time) and returns 1) the number of days to that date, and 2) a string with the date in long format
+    """
+    # Convert the date string to a datetime object
+    date = datetime.strptime(dateString, "%Y-%m-%dT%H:%M")
+
+    # Format the date in the desired format
+    formatted_date = date.strftime("%A, %B %d, %Y, %H:%M")
+
+    # Get the current date
+    today = datetime.now()
+
+    # Calculate the number of days between the current date and the given date
+    daysTo = (date - today).days
+
+    return daysTo,formatted_date
+
 
 def checkingTime ():
 ## Checking if the database needs to be built or rebuilt
@@ -400,6 +543,9 @@ def reschMenu(customDays):
     taskContent = os.getenv('myTaskContent')
     pattern = r'^(\d+)([wm]?)$'
     match = re.match(pattern, customDays)
+    matchINT = re.match(r'^\d{4}-\d{2}-\d{2}$', customDays)
+    matchINThour = re.match(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$',customDays)
+
 
     
     MYOUTPUT = {"items": []}
@@ -470,7 +616,40 @@ def reschMenu(customDays):
                                 "path": f"icons/today.png"
                             }
                         })
-    
+    elif matchINT:
+        intDate = matchINT.group()
+        daysTo, dateF = handleINTdate (intDate)
+        if daysTo ==1:
+            dayString = 'day'
+        else:
+            dayString = 'days'
+        MYOUTPUT["items"].append({
+                        "title": f"Reschedule in {daysTo:,} {dayString} 🗓️ {dateF}",
+                        "subtitle": taskContent,
+                        "arg": intDate,
+                        "variables" : {
+                            },
+                        "icon": {
+                                "path": f"icons/today.png"
+                            }
+                        })
+    elif matchINThour:
+        intDate = matchINThour.group()
+        daysTo, dateF = handleINTdateHour (intDate)
+        if daysTo ==1:
+            dayString = 'day'
+        else:
+            dayString = 'days'
+        MYOUTPUT["items"].append({
+                        "title": f"Reschedule in {daysTo:,} {dayString} 🗓️ {dateF}",
+                        "subtitle": taskContent,
+                        "arg": intDate,
+                        "variables" : {
+                            },
+                        "icon": {
+                                "path": f"icons/today.png"
+                            }
+                        })
     else:
         MYOUTPUT["items"].append({
                         "title": f"Incorrect format!",
@@ -579,7 +758,11 @@ def dueMenu(customDays,inputThrough):
 
 
 def rescheduleTask (days,taskID):
-    newDate = getNewDate(days,F=False)
+    if '-' in days: #if the full date was provided
+        newDate = days
+    else:
+        newDate = getNewDate(int(days),F=False)
+    
     log (f"days to reschedule: {days}, {taskID}, {newDate}")
 
     url = "https://api.todoist.com/sync/v9/sync"
@@ -638,7 +821,7 @@ def main():
         reschMenu (customDays)
 
     if MY_COMMAND == "reschedule":
-        daysReschedule = int(sys.argv[2] )
+        daysReschedule = sys.argv[2]
         myTaskID = os.getenv('myTaskID')
         rescheduleTask(daysReschedule,myTaskID)
 
@@ -650,9 +833,10 @@ def main():
         taskText = os.getenv('myTaskText')
         taskLabels = os.getenv('myTagString')
         taskProjectID = os.getenv('myProjectID')
+        taskSectionID = os.getenv('mySectionID')
         myDueDate = os.getenv('myDueDate')
         
-        createNewTask (taskText,taskLabels,taskProjectID, myDueDate)
+        createNewTask (taskText,taskLabels,taskProjectID, taskSectionID, myDueDate)
 
     if MY_COMMAND == "parse":
      

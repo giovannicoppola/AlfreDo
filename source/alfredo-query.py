@@ -12,7 +12,7 @@
 import json
 from datetime import datetime
 import sys
-from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData
+from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData, fetchSections
 from config import SHOW_GOALS
 
 
@@ -24,11 +24,13 @@ def main():
     checkingTime() #checking if the database needs to be rebuilt
 
     # reading data in
-    allTasks, myProjects, myStats, myUser = readTodoistData()
+    allTasks, mySections, myProjects, myStats, myUser = readTodoistData()
+    #log (f"===MY SECTIONS======={mySections}=========")
     
 
     myFilterLabels = []
     myFilterProjects = []
+    myFilterSections = []
 
     MYOUTPUT = {"items": []}
     countR=1
@@ -65,15 +67,13 @@ def main():
         GOALS_STRING = ""
     
     
-
+    #subsetting the tasks based on the mode
     if MY_MODE == "today":
         toShow = [task for task in allTasks if task['due'] and task['due']['date'] == today] # selecting tasks with due date = today
         if toShow:
             toShow = sorted(toShow, key = lambda i: i['due']['date']) #sorting by due date
         MYICON = 'icons/today.png'
         
-        
-
     elif MY_MODE == "due":
         toShow = [task for task in allTasks if task['due'] and task['due']['date'] < today] # selecting tasks with due date before today
         if toShow:
@@ -91,9 +91,14 @@ def main():
         toShow = sorted(toShow, key=lambda i: get_due_date(i))
 
         MYICON = 'icons/bullet.png'
-
+    
+    # getting all the tags, projects, sections (and counts) from the current subset of tasks
     label_counts, myLabelsAll = fetchLabels(toShow)
     project_counts,myProjectListAll = fetchProjects(toShow,myProjects)
+    section_counts,mySectionListAll, section_ParentProjects = fetchSections(toShow,mySections,myProjects)
+    #log (f"=========={section_counts}=========")
+    #log (f"=========={mySectionListAll}=========")
+    #log (f"=========={section_ParentProjects}=========")
     
     # evaluating the input string
     FINAL_INPUT = INPUT_ITEMS = MY_INPUT.split()
@@ -102,6 +107,7 @@ def main():
     mySearchStrings = []
     LABEL_FLAG = 0
     PROJECT_FLAG = 0
+    SECTION_FLAG = 0
     
     
     for inputItem in INPUT_ITEMS:
@@ -115,6 +121,11 @@ def main():
             idProj = get_project_id(myProjects, inputItem[1:])
             myFilterProjects.append (idProj)
         
+        elif inputItem in mySectionListAll: # is this a real section? :
+            #log (f"real project: {inputItem}")
+            idSect = get_project_id(mySections, inputItem[1:]) #this function should work for sections too
+            myFilterSections.append (idSect)
+        
         elif inputItem.startswith('@'): # user trying to enter a tag
             #log (f"tag fragment: {inputItem}")
             LABEL_FLAG = 1
@@ -127,6 +138,13 @@ def main():
             myProjFrag = inputItem
             FINAL_INPUT.remove(inputItem)
 
+        elif inputItem.startswith('^'): # user trying to enter a section
+            #log (f"project fragment: {inputItem}")
+            SECTION_FLAG = 1
+            mySectFrag = inputItem
+            FINAL_INPUT.remove(inputItem)
+
+        
         else: # user trying to enter a search string
             #log (f"search string fragment: {inputItem}")
             mySearchStrings.append (inputItem)
@@ -135,15 +153,55 @@ def main():
 
     # log (f"filterlabels: {myFilterLabels}")
     # log (f"filterprojects: {myFilterProjects}")
+    # log (f"filtersections: {myFilterSections}")
     # log (f"search strings: {mySearchStrings}")
    
+    
     toShow = [item for item in toShow if (
         all(label in item.get('labels', []) for label in myFilterLabels) and 
-        all(project in item.get('project_id', []) for project in myFilterProjects) and 
+        all(project in item.get('project_id', '') for project in myFilterProjects) and 
         all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
         )]
     
+
+    if myFilterSections:
+        toShow = [item for item in toShow if (
+            all(label in item.get('labels', []) for label in myFilterLabels) and 
+            all(project in item.get('project_id', '') for project in myFilterProjects) and 
+            (item.get('section_id') is not None and all(section in item['section_id'] for section in myFilterSections)) and 
+            all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
+            )]
+        
+    # toShow = [item for item in toShow if (
+    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
+    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
+    #     all(section in item.get('section_id', '') for section in myFilterSections) and 
+    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
+    #     )]
+   
+    # toShow = [item for item in toShow if (
+    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
+    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
+    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
+    #     )]
     
+    
+    # toShow = [item for item in toShow if (
+    #     item.get('section_id') is not None and 
+    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
+    #     )]
+    
+
+    # toShow = [item for item in toShow if (
+    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
+    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
+    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
+    #     )]
+    
+        
+    #toShow = [d for d in toShow if d.get("section_id") in myFilterSections or d.get("section_id") is None]
+    
+
     if LABEL_FLAG == 1:
         label_counts, myLabels = fetchLabels(toShow)
         mySubset = [i for i in myLabels if myTagFrag.casefold() in i.casefold()]
@@ -224,6 +282,46 @@ def main():
             print (json.dumps(MYOUTPUT))
             exit()
     
+    if SECTION_FLAG == 1:
+            section_counts,mySectionList, section_ParentProjects = fetchSections(toShow,mySections,myProjects)
+            mySubset = [i for i in mySectionList if mySectFrag.casefold() in i.casefold()]
+            
+            # adding a complete project name if the user selects it from the list
+            if mySubset:
+                for thisSect in mySubset:
+                    if MY_INPUT:
+                        MY_ARG = f"{MY_INPUT} {thisSect} "
+                    else:
+                        MY_ARG = f"{thisSect} "
+                    MYOUTPUT["items"].append({
+                    "title": f"{thisSect} ({section_ParentProjects[thisSect[1:]]}, {section_counts[thisSect[1:]]})",
+                    "subtitle": MY_INPUT,
+                    "arg": '',
+                    "variables" : {
+                        "myIter": True,
+                        "myArg": MY_ARG,
+                        "myMode": MY_MODE
+                        },
+                    "icon": {
+                            "path": f"icons/section.png"
+                        }
+                    })
+            else:
+                MYOUTPUT["items"].append({
+                "title": "no sections matching",
+                "subtitle": "try another query?",
+                "arg": "",
+                 "variables" : {
+                    
+                    "myArg": MY_INPUT+" "
+                    },
+                "icon": {
+                        "path": f"icons/Warning.png"
+                    }
+                })
+            print (json.dumps(MYOUTPUT))
+            exit()    
+    
     if toShow:
         
         for task in toShow:
@@ -231,7 +329,10 @@ def main():
             myContent = task ['content'] 
             myMatchCount = len(toShow)
             if task ['due']:
-                dueDate =datetime.strptime(task ['due']['date'] , '%Y-%m-%d')
+                if 'T' in task ['due']['date']:
+                    dueDate = datetime.strptime(task ['due']['date'], "%Y-%m-%dT%H:%M:%S")
+                else:
+                    dueDate =datetime.strptime(task ['due']['date'] , '%Y-%m-%d')
                 if dueDate:
                     dueDays = todayDate - dueDate
                     if abs(dueDays.days) == 1:
