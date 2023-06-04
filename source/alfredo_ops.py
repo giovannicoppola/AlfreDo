@@ -398,13 +398,13 @@ def parseNewTask (myInput):
                         
             if matchDue:
                dueString = getNewDate (int(matchDue.group(1)),F=False)
-               log (dueString)
+               #log (dueString)
             elif matchINT:
                 dueString = matchINT.group(1)
-                log (dueString)
+                #log (dueString)
             elif matchINThour:
                 dueString = matchINThour.group(1)
-                log (dueString)                            
+                #log (dueString)                            
             else:
                 customDays = myInputItem.split(':')[1]
                 myInput = " ".join(myInputElements)
