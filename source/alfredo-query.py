@@ -94,7 +94,7 @@ def main():
     
     # getting all the tags, projects, sections (and counts) from the current subset of tasks
     label_counts, myLabelsAll = fetchLabels(toShow)
-    project_counts,myProjectListAll = fetchProjects(toShow,myProjects)
+    project_counts,myProjectListAll = fetchProjects(toShow,myProjects,mySections)
     section_counts,mySectionListAll, section_ParentProjects = fetchSections(toShow,mySections,myProjects)
     #log (f"=========={section_counts}=========")
     #log (f"=========={mySectionListAll}=========")
@@ -117,14 +117,23 @@ def main():
             myFilterLabels.append (inputItem[1:])
             
         elif inputItem in myProjectListAll: # is this a real project? :
-            #log (f"real project: {inputItem}")
-            idProj = get_project_id(myProjects, inputItem[1:])
-            myFilterProjects.append (idProj)
+            if "/" in inputItem: #there is a section
+                inputProject = inputItem.split("/")[0]
+                inputSection = inputItem.split("/")[1]
+                idProj = get_project_id(myProjects, inputProject[1:])
+                idSect = get_project_id(mySections, inputSection) #this function should work for sections too
+                myFilterProjects.append (idProj)
+                myFilterSections.append (idSect)
         
-        elif inputItem in mySectionListAll: # is this a real section? :
-            #log (f"real project: {inputItem}")
-            idSect = get_project_id(mySections, inputItem[1:]) #this function should work for sections too
-            myFilterSections.append (idSect)
+            else:
+                #log (f"real project: {inputItem}")
+                idProj = get_project_id(myProjects, inputItem[1:])
+                myFilterProjects.append (idProj)
+        
+        # elif inputItem in mySectionListAll: # is this a real section? :
+        #     #log (f"real project: {inputItem}")
+        #     idSect = get_project_id(mySections, inputItem[1:]) #this function should work for sections too
+        #     myFilterSections.append (idSect)
         
         elif inputItem.startswith('@'): # user trying to enter a tag
             #log (f"tag fragment: {inputItem}")
@@ -138,11 +147,11 @@ def main():
             myProjFrag = inputItem
             FINAL_INPUT.remove(inputItem)
 
-        elif inputItem.startswith('^'): # user trying to enter a section
-            #log (f"project fragment: {inputItem}")
-            SECTION_FLAG = 1
-            mySectFrag = inputItem
-            FINAL_INPUT.remove(inputItem)
+        # elif inputItem.startswith('^'): # user trying to enter a section
+        #     #log (f"project fragment: {inputItem}")
+        #     SECTION_FLAG = 1
+        #     mySectFrag = inputItem
+        #     FINAL_INPUT.remove(inputItem)
 
         
         else: # user trying to enter a search string
@@ -243,7 +252,7 @@ def main():
         exit()
 
     if PROJECT_FLAG == 1:
-            project_counts, myProjectList = fetchProjects(toShow,myProjects)
+            project_counts, myProjectList = fetchProjects(toShow,myProjects,mySections)
             mySubset = [i for i in myProjectList if myProjFrag.casefold() in i.casefold()]
             
             # adding a complete project name if the user selects it from the list

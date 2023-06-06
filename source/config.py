@@ -15,6 +15,8 @@ TOKEN = os.path.expanduser(os.getenv('TOKEN', ''))
 WF_BUNDLE = os.getenv('alfred_workflow_bundleid')
 DATA_FOLDER = os.getenv('alfred_workflow_data')
 MY_DATABASE = f"{DATA_FOLDER}/allData.json"
+MY_LABEL_COUNTS = f"{DATA_FOLDER}/labelCounts.json"
+MY_PROJECT_COUNTS = f"{DATA_FOLDER}/projectCounts.json"
 
 
 
