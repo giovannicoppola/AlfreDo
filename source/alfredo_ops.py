@@ -350,7 +350,7 @@ def parseNewTask (myInput):
 
     # log (f"mySections all: {mySections}")
     # log (f"myProjects all: {myProjects}")
-    # MYOUTPUT = {"items": []}
+    MYOUTPUT = {"items": []}
     myInputElements = myInput.split()
     #finalInputItems = myInputElements
     #FINAL_INPUT = " ".join(finalInputItems)
