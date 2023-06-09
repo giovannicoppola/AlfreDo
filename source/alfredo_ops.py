@@ -351,31 +351,90 @@ def parseNewTask (myInput):
     # log (f"mySections all: {mySections}")
     # log (f"myProjects all: {myProjects}")
     MYOUTPUT = {"items": []}
-    myInputElements = myInput.split()
-    #finalInputItems = myInputElements
-    #FINAL_INPUT = " ".join(finalInputItems)
     
+    def parseInput(MY_INPUT):
     
+        pattern = r'\s*(#\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parenthese and preceded by #
+        result = re.findall(pattern, MY_INPUT)
+    
+        return (result)
+    
+    myInputElements = parseInput (myInput)
+    log (myInputElements)
     for myInputItem in myInputElements:
         
         if myInputItem.strip() in myLabelListAll: # is this a real tag? 
             
             myTags.append (myInputItem[1:])    
         
-        elif myInputItem.strip() in myProjectListAll: # is this a real project? 
-            if "/" in myInputItem:
-                taskProjectName = myInputItem.split("/")[0]
-                taskSectionName = myInputItem.split("/")[1]
-                taskProjectID = get_project_id (myProjects,taskProjectName[1:])
-                taskSectionID = get_section_id (myProjects,mySections, myInputItem)
-                log (f"project name: {taskProjectName}, section name: {taskSectionName}, projectID: {taskProjectID}, sectionID: {taskSectionID}")
-            else:
-                taskProjectName = myInputItem
-                taskProjectID = get_project_id (myProjects,myInputItem[1:])
+        elif myInputItem.startswith('#'): # user trying to enter a project 
+            if "(" in myInputItem: #there is a space and AlfreDO introduced parentheses (which are not allowed in project names)
+                myInputItem = myInputItem.replace("(","")
+                myInputItem = myInputItem.replace(")","")
+                myInputItem = myInputItem.strip()
+        
+            if myInputItem.strip() in myProjectListAll: # is this a real project? 
+                if "/" in myInputItem:
+                    taskProjectName = myInputItem.split("/")[0]
+                    taskSectionName = myInputItem.split("/")[1]
+                    taskProjectID = get_project_id (myProjects,taskProjectName[1:])
+                    taskSectionID = get_section_id (myProjects,mySections, myInputItem)
+                    log (f"project name: {taskProjectName}, section name: {taskSectionName}, projectID: {taskProjectID}, sectionID: {taskSectionID}")
+                else:
+                    taskProjectName = myInputItem
+                    taskProjectID = get_project_id (myProjects,myInputItem[1:])
+                    
+        # elif myInputItem.strip() in mySectionListAll: # is this a real section? 
+        #     taskSectionName = myInputItem
+        #     taskSectionID = get_project_id (mySections,myInputItem[1:])
+        
+            else: #user trying to add a project
                 
-        elif myInputItem.strip() in mySectionListAll: # is this a real section? 
-            taskSectionName = myInputItem
-            taskSectionID = get_project_id (mySections,myInputItem[1:])
+                mySubset = [i for i in myProjectListAll if myInputItem.casefold() in i.casefold()]
+                log (f"INPUT ITEM: {myInputItem}")
+                
+                # adding a complete project name if the user selects it from the list
+                if mySubset:
+                    
+                    myInputElements.remove(myInputItem)
+                    myInput = " ".join(myInputElements)
+                    
+                    for thisProj in mySubset:
+                        if " " in thisProj:
+                            thisProj_string = f"#({thisProj[1:]})"
+                        else:
+                            thisProj_string = thisProj
+                        if myInput:
+                            MY_ARG = f"{myInput} {thisProj_string} "
+                        else:
+                            MY_ARG = f"{thisProj_string} "
+                        MYOUTPUT["items"].append({
+                        "title": f"{thisProj} ({project_counts[thisProj[1:]]})",
+                        "subtitle": MY_ARG,
+                        "arg": MY_ARG,
+                        "variables" : {
+                            
+                            },
+                        "icon": {
+                                "path": f"icons/project.png"
+                            }
+                        })
+                else:
+                    MYOUTPUT["items"].append({
+                    "title": "no projects matching",
+                    "subtitle": "try another query?",
+                    "arg": "",
+                    "variables" : {
+                        
+                        "myArg": MY_INPUT+" "
+                        },
+                    "icon": {
+                            "path": f"icons/Warning.png"
+                        }
+                    })
+                print (json.dumps(MYOUTPUT))
+                exit()
+            
 
         elif myInputItem.startswith('@'): #user trying to add a label
             
@@ -420,47 +479,6 @@ def parseNewTask (myInput):
             
             exit()
     
-        elif myInputItem.startswith('#'): #user trying to add a project
-            
-            mySubset = [i for i in myProjectListAll if myInputItem.casefold() in i.casefold()]
-            
-            
-            # adding a complete project name if the user selects it from the list
-            if mySubset:
-                myInputElements.remove(myInputItem)
-                myInput = " ".join(myInputElements)
-                
-                for thisProj in mySubset:
-                    if myInput:
-                        MY_ARG = f"{myInput} {thisProj} "
-                    else:
-                        MY_ARG = f"{thisProj} "
-                    MYOUTPUT["items"].append({
-                    "title": f"{thisProj} ({project_counts[thisProj[1:]]})",
-                    "subtitle": MY_ARG,
-                    "arg": MY_ARG,
-                    "variables" : {
-                        
-                        },
-                    "icon": {
-                            "path": f"icons/project.png"
-                        }
-                    })
-            else:
-                MYOUTPUT["items"].append({
-                "title": "no projects matching",
-                "subtitle": "try another query?",
-                "arg": "",
-                 "variables" : {
-                    
-                    "myArg": MY_INPUT+" "
-                    },
-                "icon": {
-                        "path": f"icons/Warning.png"
-                    }
-                })
-            print (json.dumps(MYOUTPUT))
-            exit()
         
         # elif myInputItem.startswith('^'): #user trying to add a section
             
@@ -529,7 +547,7 @@ def parseNewTask (myInput):
             
 
     MYOUTPUT = {"items": []}
-    myTaskElements = myInput.split()
+    myTaskElements = parseInput (myInput)
     
     for xxx in myTaskElements[:]:
         if xxx.startswith('@') or xxx.startswith('#') or xxx.startswith('^') or xxx.startswith('due:'):

@@ -14,6 +14,7 @@ from datetime import datetime
 import sys
 from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData, fetchSections
 from config import SHOW_GOALS
+import re
 
 
 
@@ -101,39 +102,61 @@ def main():
     #log (f"=========={section_ParentProjects}=========")
     
     # evaluating the input string
-    FINAL_INPUT = INPUT_ITEMS = MY_INPUT.split()
+    #FINAL_INPUT = INPUT_ITEMS = re.findall(r'\[[^\]]*\]|\([^)]*\)|"[^"]*"|#[^ ]*|@[^ ]*|\S+', MY_INPUT)
+    #FINAL_INPUT = INPUT_ITEMS = MY_INPUT.split()
     
-    
+
+    def parseInput(MY_INPUT):
+        
+        pattern = r'\s*(#\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parenthese and preceded by #
+        result = re.findall(pattern, MY_INPUT)
+        
+        return (result)
+
+    FINAL_INPUT = INPUT_ITEMS = parseInput(MY_INPUT)
     mySearchStrings = []
     LABEL_FLAG = 0
     PROJECT_FLAG = 0
-    SECTION_FLAG = 0
+    #SECTION_FLAG = 0
     
+    log (INPUT_ITEMS)
     
     for inputItem in INPUT_ITEMS:
-        #log (inputItem)
+        log (inputItem)
         if inputItem.strip() in myLabelsAll: # is this a real tag? 
             #log (f"real tag: {inputItem}")
             myFilterLabels.append (inputItem[1:])
             
-        elif inputItem in myProjectListAll: # is this a real project? :
-            if "/" in inputItem: #there is a section
-                inputProject = inputItem.split("/")[0]
-                inputSection = inputItem.split("/")[1]
-                idProj = get_project_id(myProjects, inputProject[1:])
-                idSect = get_project_id(mySections, inputSection) #this function should work for sections too
-                myFilterProjects.append (idProj)
-                myFilterSections.append (idSect)
-        
-            else:
-                #log (f"real project: {inputItem}")
-                idProj = get_project_id(myProjects, inputItem[1:])
-                myFilterProjects.append (idProj)
-        
-        # elif inputItem in mySectionListAll: # is this a real section? :
-        #     #log (f"real project: {inputItem}")
-        #     idSect = get_project_id(mySections, inputItem[1:]) #this function should work for sections too
-        #     myFilterSections.append (idSect)
+        elif inputItem.startswith('#'): # user trying to enter a project 
+            if "(" in inputItem: #there is a space and AlfreDO introduced parentheses (which are not allowed in project names)
+                inputItem = inputItem.replace("(","")
+                inputItem = inputItem.replace(")","")
+                inputItem = inputItem.strip()
+                
+            
+            #log (inputItem)
+            if inputItem in myProjectListAll: # is this a real project? :
+                if "/" in inputItem: #there is a section
+                    inputProject = inputItem.split("/")[0]
+                    inputSection = inputItem.split("/")[1]
+                    idProj = get_project_id(myProjects, inputProject[1:])
+                    idSect = get_project_id(mySections, inputSection) #this function should work for sections too
+                    myFilterProjects.append (idProj)
+                    myFilterSections.append (idSect)
+            
+                else:
+                    #log (f"real project: {inputItem}")
+                    idProj = get_project_id(myProjects, inputItem[1:])
+                    #log (idProj)
+                    myFilterProjects.append (idProj)
+            
+            else: # user trying to enter a project
+                #log (f"project fragment: {inputItem}")
+                PROJECT_FLAG = 1
+                myProjFrag = inputItem
+                #log (inputItem)
+                FINAL_INPUT.remove(inputItem)
+            
         
         elif inputItem.startswith('@'): # user trying to enter a tag
             #log (f"tag fragment: {inputItem}")
@@ -141,23 +164,13 @@ def main():
             myTagFrag = inputItem
             FINAL_INPUT.remove(inputItem)
         
-        elif inputItem.startswith('#'): # user trying to enter a project
-            #log (f"project fragment: {inputItem}")
-            PROJECT_FLAG = 1
-            myProjFrag = inputItem
-            FINAL_INPUT.remove(inputItem)
 
-        # elif inputItem.startswith('^'): # user trying to enter a section
-        #     #log (f"project fragment: {inputItem}")
-        #     SECTION_FLAG = 1
-        #     mySectFrag = inputItem
-        #     FINAL_INPUT.remove(inputItem)
-
-        
         else: # user trying to enter a search string
             #log (f"search string fragment: {inputItem}")
             mySearchStrings.append (inputItem)
-            
+
+    log (myFilterProjects)
+    log (myFilterSections)
     MY_INPUT = " ".join(FINAL_INPUT) #this is needed to allow multiple tags and projects in the input string
 
     # log (f"filterlabels: {myFilterLabels}")
@@ -181,35 +194,7 @@ def main():
             all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
             )]
         
-    # toShow = [item for item in toShow if (
-    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
-    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
-    #     all(section in item.get('section_id', '') for section in myFilterSections) and 
-    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
-    #     )]
    
-    # toShow = [item for item in toShow if (
-    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
-    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
-    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
-    #     )]
-    
-    
-    # toShow = [item for item in toShow if (
-    #     item.get('section_id') is not None and 
-    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
-    #     )]
-    
-
-    # toShow = [item for item in toShow if (
-    #     all(label in item.get('labels', []) for label in myFilterLabels) and 
-    #     all(project in item.get('project_id', '') for project in myFilterProjects) and 
-    #     all(substring.casefold() in item['content'].casefold() for substring in mySearchStrings)
-    #     )]
-    
-        
-    #toShow = [d for d in toShow if d.get("section_id") in myFilterSections or d.get("section_id") is None]
-    
 
     if LABEL_FLAG == 1:
         label_counts, myLabels = fetchLabels(toShow)
@@ -258,10 +243,14 @@ def main():
             # adding a complete project name if the user selects it from the list
             if mySubset:
                 for thisProj in mySubset:
-                    if MY_INPUT:
-                        MY_ARG = f"{MY_INPUT} {thisProj} "
+                    if " " in thisProj:
+                        thisProj_string = f"#({thisProj[1:]})"
                     else:
-                        MY_ARG = f"{thisProj} "
+                        thisProj_string = thisProj
+                    if MY_INPUT:
+                        MY_ARG = f"{MY_INPUT} {thisProj_string} "
+                    else:
+                        MY_ARG = f"{thisProj_string} "
                     MYOUTPUT["items"].append({
                     "title": f"{thisProj} ({project_counts[thisProj[1:]]})",
                     "subtitle": MY_INPUT,
@@ -291,45 +280,45 @@ def main():
             print (json.dumps(MYOUTPUT))
             exit()
     
-    if SECTION_FLAG == 1:
-            section_counts,mySectionList, section_ParentProjects = fetchSections(toShow,mySections,myProjects)
-            mySubset = [i for i in mySectionList if mySectFrag.casefold() in i.casefold()]
+    # if SECTION_FLAG == 1:
+    #         section_counts,mySectionList, section_ParentProjects = fetchSections(toShow,mySections,myProjects)
+    #         mySubset = [i for i in mySectionList if mySectFrag.casefold() in i.casefold()]
             
-            # adding a complete project name if the user selects it from the list
-            if mySubset:
-                for thisSect in mySubset:
-                    if MY_INPUT:
-                        MY_ARG = f"{MY_INPUT} {thisSect} "
-                    else:
-                        MY_ARG = f"{thisSect} "
-                    MYOUTPUT["items"].append({
-                    "title": f"{thisSect} ({section_ParentProjects[thisSect[1:]]}, {section_counts[thisSect[1:]]})",
-                    "subtitle": MY_INPUT,
-                    "arg": '',
-                    "variables" : {
-                        "myIter": True,
-                        "myArg": MY_ARG,
-                        "myMode": MY_MODE
-                        },
-                    "icon": {
-                            "path": f"icons/section.png"
-                        }
-                    })
-            else:
-                MYOUTPUT["items"].append({
-                "title": "no sections matching",
-                "subtitle": "try another query?",
-                "arg": "",
-                 "variables" : {
+    #         # adding a complete project name if the user selects it from the list
+    #         if mySubset:
+    #             for thisSect in mySubset:
+    #                 if MY_INPUT:
+    #                     MY_ARG = f"{MY_INPUT} {thisSect} "
+    #                 else:
+    #                     MY_ARG = f"{thisSect} "
+    #                 MYOUTPUT["items"].append({
+    #                 "title": f"{thisSect} ({section_ParentProjects[thisSect[1:]]}, {section_counts[thisSect[1:]]})",
+    #                 "subtitle": MY_INPUT,
+    #                 "arg": '',
+    #                 "variables" : {
+    #                     "myIter": True,
+    #                     "myArg": MY_ARG,
+    #                     "myMode": MY_MODE
+    #                     },
+    #                 "icon": {
+    #                         "path": f"icons/section.png"
+    #                     }
+    #                 })
+    #         else:
+    #             MYOUTPUT["items"].append({
+    #             "title": "no sections matching",
+    #             "subtitle": "try another query?",
+    #             "arg": "",
+    #              "variables" : {
                     
-                    "myArg": MY_INPUT+" "
-                    },
-                "icon": {
-                        "path": f"icons/Warning.png"
-                    }
-                })
-            print (json.dumps(MYOUTPUT))
-            exit()    
+    #                 "myArg": MY_INPUT+" "
+    #                 },
+    #             "icon": {
+    #                     "path": f"icons/Warning.png"
+    #                 }
+    #             })
+    #         print (json.dumps(MYOUTPUT))
+    #         exit()    
     
     if toShow:
         
@@ -431,70 +420,3 @@ if __name__ == '__main__':
     main ()
 
 
-
-""" OLDER CODE
-# extracting any full tags from current input, adding them to the list to filter
-    # fullTags = re.findall('@[^ ]+ ', MY_INPUT)
-    # fullTags = [s.strip() for s in fullTags]
-    # mySearchInput = MY_INPUT.strip()
-
-    # if bool (fullTags):
-    #     for currTag  in fullTags:
-    #         if currTag.strip() in myLabels: #if it is a real tag
-    #             myFilterLabels.append(currTag[1:].strip()) #adds to the list of tags to filter for
-    #             mySearchInput = re.sub(currTag, '', mySearchInput).strip() #subtracts the tag from the search string
-        
-    # # check if the user is trying to enter a tag
-    # MYMATCH = re.search(r'(?:^| )@[^ ]*$', MY_INPUT)
-    # if (MYMATCH !=None):
-    #     MYFLAG = MYMATCH.group(0).lstrip(' ')
-    #     mySearchInput = re.sub(MYFLAG,'',MY_INPUT)
-    #     # refining the subset to show based on tags and search string
-    #     toShow = [item for item in toShow if (all(label in item.get('labels', []) for label in myFilterLabels)) and all(substring.casefold() in item['content'].casefold() for substring in mySearchInput.split())]
-    # else:
-    #     toShow = [item for item in toShow if (all(label in item.get('labels', []) for label in myFilterLabels)) and all(substring.casefold() in item['content'].casefold() for substring in mySearchInput.split())]
-
-    # # check if the user is trying to enter a tag
-    # MYMATCH = re.search(r'(?:^| )@[^ ]*$', MY_INPUT)
-    # if (MYMATCH !=None):
-        
-    #     MYFLAG = MYMATCH.group(0).lstrip(' ')
-    #     MY_INPUT = re.sub(MYFLAG,'',MY_INPUT)
-    #     # refining the subset to show based on tags and search string
-    #     toShow = [item for item in toShow if (all(label in item.get('labels', []) for label in myFilterLabels)) and all(substring.casefold() in item['content'].casefold() for substring in MY_INPUT.split())]
-    #     log(f" search input: {mySearchInput}")
-    #     log(f" input: {MY_INPUT}")
-        # # getting all the tags (and counts) from the current subset of tasks
-        # label_counts = {}
-        # for item in toShow:
-        #     for label in item.get('labels', []):
-        #         if label in label_counts:
-        #             label_counts[label] += 1
-        #         else:
-        #             label_counts[label] = 1
-        # myLabels = list(label_counts.keys())
-        # myLabels = ['@' + s for s in myLabels]
-        # log (label_counts)
-        # log (f"myLabels: {myLabels}")
-
-
-        if MY_MODE == 'due':
-                dueDate =datetime.strptime(task ['due']['date'] , '%Y-%m-%d')
-                myDue = dueDate if task ['due'] else ""
-                if myDue:
-                    dueDays = todayDate - myDue
-                    dueString = f"{dueDays.days:,} days overdue❗"
-                else: 
-                    dueString = ""
-            elif MY_MODE == 'today':
-                dueString = "DUE TODAY"
-            else: 
-                dueString = ""
-            
-            if task['labels']:
-                
-                myLabelsString = f"🏷️ {','.join(task['labels'])}"
-            else:
-                myLabelsString = ""
-    
-"""

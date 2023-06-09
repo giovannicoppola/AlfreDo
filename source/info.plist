@@ -1066,37 +1066,6 @@ python3 alfredo-query.py "today" "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>0</integer>
-				<key>hotmod</key>
-				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>28C94810-BE49-43D5-A1CF-8B1008F6EF69</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -1125,6 +1094,37 @@ python3 alfredo-query.py "today" "$1"</string>
 			<string>27453929-F779-489C-B8BC-0F9487E32744</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>28C94810-BE49-43D5-A1CF-8B1008F6EF69</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1710,9 +1710,9 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 		<key>27453929-F779-489C-B8BC-0F9487E32744</key>
 		<dict>
 			<key>xpos</key>
-			<real>690</real>
+			<real>710</real>
 			<key>ypos</key>
-			<real>410</real>
+			<real>375</real>
 		</dict>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
 		<dict>
@@ -2103,7 +2103,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.2.1</string>
+	<string>0.2.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>
