@@ -61,15 +61,15 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 ## Searching your tasks 🔍
 - launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, or 3) all tasks
-- Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project. 
+- Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project/section. 
 - Once a task is selected, you can do one of three things: 
 	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/)
 	- `shift-enter` ⇧↩️ will complete the task
-	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
 	
 
 ## Creating new tasks ⭐
-- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
+- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
 - Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 
 
@@ -94,10 +94,12 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	- https://www.flaticon.com/free-icon/task_2098402
 	- https://www.flaticon.com/free-icon/check_10308323
 	- https://www.flaticon.com/free-icon/bowler-hat_3345848
+- Thanks to Werner Dijkerman for help with troubleshooting. 
 	
 	
 <h1 id="changelog">Changelog 🧰</h1>
 
+- 06-10-2023: version 0.2.2 support for sections, international date, time, supporting spaces in project names
 - 05-03-2023: version 0.1
 
 
