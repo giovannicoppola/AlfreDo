@@ -70,7 +70,7 @@ def main():
     
     #subsetting the tasks based on the mode
     if MY_MODE == "today":
-        toShow = [task for task in allTasks if task['due'] and task['due']['date'] == today] # selecting tasks with due date = today
+        toShow = [task for task in allTasks if task['due'] and task['due']['date'].split("T")[0] == today] # selecting tasks with due date = today
         if toShow:
             toShow = sorted(toShow, key = lambda i: i['due']['date']) #sorting by due date
         MYICON = 'icons/today.png'
