@@ -113,16 +113,6 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>4E48F7D7-AC83-4A0A-A3BC-2682FD5F6319</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -171,6 +161,16 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>81A7FDDF-890B-49BE-907D-7ACFD33A1332</string>
 				<key>modifiers</key>
 				<integer>131072</integer>
@@ -182,16 +182,6 @@
 		</array>
 		<key>47D97373-8433-4825-8730-B8622E2C269D</key>
 		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>4E48F7D7-AC83-4A0A-A3BC-2682FD5F6319</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
@@ -232,6 +222,16 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>81A7FDDF-890B-49BE-907D-7ACFD33A1332</string>
 				<key>modifiers</key>
 				<integer>131072</integer>
@@ -260,6 +260,16 @@
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
 				<string>reschedule this task ↪️</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -410,16 +420,6 @@
 		</array>
 		<key>CF0E1859-2656-4994-96F9-BE03DFFD1B19</key>
 		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>4E48F7D7-AC83-4A0A-A3BC-2682FD5F6319</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
@@ -721,6 +721,33 @@ python3 alfredo_ops.py "findDate" "$myTaskID" "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if [ "$taskOpen" = "app" ]; then
+	open "$myAppURL"
+else
+	open "$myURL"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -839,27 +866,6 @@ python3 alfredo-query.py "due" "$1"</string>
 			<string>B8C6ADC3-9493-4F49-8D3F-56910FA3B5B7</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>skipqueryencode</key>
-				<false/>
-				<key>skipvarencode</key>
-				<false/>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{var:myURL}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
-			<key>uid</key>
-			<string>4E48F7D7-AC83-4A0A-A3BC-2682FD5F6319</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1498,7 +1504,7 @@ python3 alfredo_ops.py "rebuild" "$1"
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>!!!</string>
+				<string>{var:newtask_keyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -1753,17 +1759,6 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>ypos</key>
 			<real>20</real>
 		</dict>
-		<key>4E48F7D7-AC83-4A0A-A3BC-2682FD5F6319</key>
-		<dict>
-			<key>colorindex</key>
-			<integer>3</integer>
-			<key>note</key>
-			<string>Open on todoist.com</string>
-			<key>xpos</key>
-			<real>1320</real>
-			<key>ypos</key>
-			<real>205</real>
-		</dict>
 		<key>4EEF423D-B6D9-4EB4-BFE9-5DDBEBC99391</key>
 		<dict>
 			<key>xpos</key>
@@ -1835,6 +1830,17 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<real>1320</real>
 			<key>ypos</key>
 			<real>370</real>
+		</dict>
+		<key>8626AD51-37A7-478D-9561-F5F20EF86C08</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>3</integer>
+			<key>note</key>
+			<string>Open task in app or todoist website</string>
+			<key>xpos</key>
+			<real>1320</real>
+			<key>ypos</key>
+			<real>195</real>
 		</dict>
 		<key>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</key>
 		<dict>
@@ -2021,6 +2027,27 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>!!!</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>New Task Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>newtask_keyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>todoist::refresh</string>
 				<key>placeholder</key>
 				<string></string>
@@ -2099,9 +2126,37 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>variable</key>
 			<string>RefreshRate</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>browser</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Todoist App</string>
+						<string>app</string>
+					</array>
+					<array>
+						<string>Todoist Website</string>
+						<string>browser</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Where to open tasks in: app or browser</string>
+			<key>label</key>
+			<string>Open tasks in</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>taskOpen</string>
+		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>0.2.2</string>
+	<string>0.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>

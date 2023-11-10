@@ -365,6 +365,7 @@ def main():
              "variables" : {
                     "myIter": False,
                     "myURL": f"https://todoist.com/app/project/{task['project_id']}/task/{task['id']}",
+                    "myAppURL": f"todoist://task?id={task['id']}",
                     "myTaskID": task['id'],
                     "myTaskContent": myContent,
                     "myArg": MY_INPUT,
