@@ -72,7 +72,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 ## Creating new tasks ⭐
 - launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
-- Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
+- Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 
 
 ## Database refresh 🔄
@@ -100,6 +100,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	
 	
 <h1 id="changelog">Changelog 🧰</h1>
+
 - 11-10-2023: version 0.3 support for app, bug fixes
 - 06-10-2023: version 0.2.2 support for sections, international date, time, supporting spaces in project names
 - 05-03-2023: version 0.1
