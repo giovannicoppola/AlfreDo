@@ -63,16 +63,20 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 ## Searching your tasks 🔍
 - launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, or 3) all tasks
+![](images/demo.png)
 - Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project/section. 
 - Once a task is selected, you can do one of three things: 
 	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
 	- `shift-enter` ⇧↩️ will complete the task
 	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+![](images/reschedule.png)
 	
 
 ## Creating new tasks ⭐
 - launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
+![](images/universalAction.png)
+
 
 
 ## Database refresh 🔄
