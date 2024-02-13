@@ -108,7 +108,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	
 <h1 id="changelog">Changelog 🧰</h1>
 
-- 02-13-2024: version 0.4 new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md))
+- 02-13-2024: version 0.4 new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md#version-04-feb-2024))
 - 11-10-2023: version 0.3 support for app, bug fixes
 - 06-10-2023: version 0.2.2 support for sections, international date, time, supporting spaces in project names
 - 05-03-2023: version 0.1
