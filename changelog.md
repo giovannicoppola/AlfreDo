@@ -15,8 +15,8 @@
 
 
 ### bug fixes 🕷️
-    - would occasionally open the workflow folder after selecting a project or label
-    - better handling of missing projects or labels
-    - accepting Z timezone in due date
+- would occasionally open the workflow folder after selecting a project or label
+- better handling of missing projects or labels
+- accepting Z timezone in due date
 
 
