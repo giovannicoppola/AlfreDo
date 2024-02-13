@@ -13,11 +13,16 @@ import json
 from datetime import datetime
 import sys
 from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData, fetchSections
-from config import SHOW_GOALS
+from config import SHOW_GOALS, PARTIAL_MATCH
 import re
 
 
-
+def parseInput(MY_INPUT):
+    
+    pattern = r'\s*([@#]\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parentheses and preceded by # or @
+    result = re.findall(pattern, MY_INPUT)
+    
+    return (result)
 
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
@@ -26,8 +31,7 @@ def main():
 
     # reading data in
     allTasks, mySections, myProjects, myStats, myUser = readTodoistData()
-    #log (f"===MY SECTIONS======={mySections}=========")
-    
+        
 
     myFilterLabels = []
     myFilterProjects = []
@@ -101,40 +105,73 @@ def main():
     #log (f"=========={mySectionListAll}=========")
     #log (f"=========={section_ParentProjects}=========")
     
-    # evaluating the input string
-    #FINAL_INPUT = INPUT_ITEMS = re.findall(r'\[[^\]]*\]|\([^)]*\)|"[^"]*"|#[^ ]*|@[^ ]*|\S+', MY_INPUT)
-    #FINAL_INPUT = INPUT_ITEMS = MY_INPUT.split()
-    
-
-    def parseInput(MY_INPUT):
-        
-        pattern = r'\s*(#\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parenthese and preceded by #
-        result = re.findall(pattern, MY_INPUT)
-        
-        return (result)
 
     FINAL_INPUT = INPUT_ITEMS = parseInput(MY_INPUT)
     mySearchStrings = []
     LABEL_FLAG = 0
     PROJECT_FLAG = 0
-    #SECTION_FLAG = 0
     
-    log (INPUT_ITEMS)
+    log (f"input items: {INPUT_ITEMS}")
     
     for inputItem in INPUT_ITEMS:
-        log (inputItem)
-        if inputItem.strip() in myLabelsAll: # is this a real tag? 
-            #log (f"real tag: {inputItem}")
-            myFilterLabels.append (inputItem[1:])
+
+        # an item starting with @ can be one of 5 things: 
+            # 1. a complete, existing tag with spaces (will need parentheses)
+            # 2. a complete, existing tag
+            # 3. an incomplete tag the user is trying to add (will need drop down autocomplete)
+            # 4. a non-existent tag (will be dealt with in the dropdown)
+            # 5. a badly parsed tag (containing a space and a closed parenthesis)
+        
+
+
+        if inputItem.startswith('@'): # user trying to enter a tag
+        #log (f"tag fragment: {inputItem}")
             
-        elif inputItem.startswith('#'): # user trying to enter a project 
-            if "(" in inputItem: #there is a space and AlfreDO introduced parentheses (which are not allowed in project names)
-                inputItem = inputItem.replace("(","")
+            # at the time of the first version of the workflow, parentheses and other special characters were not allowed in project names, and I used them to allow spaces in Alfred's window
+            # in July 2023 they were allowed.
+            if inputItem.startswith("@(") and inputItem.endswith(")") and " " in inputItem: #there is a space and AlfreDO introduced parentheses 
+                inputItem = inputItem.replace("(","",1)
                 inputItem = inputItem.replace(")","")
                 inputItem = inputItem.strip()
                 
+            log (f"after checking: {inputItem}")
+            if inputItem.strip() in myLabelsAll: # is this a real tag? 
+            #log (f"real tag: {inputItem}")
             
-            #log (inputItem)
+                myFilterLabels.append (inputItem[1:]) # add a real tag to the list of labels
+        
+            else: #incomplete tag: needs dropdown
+                
+                LABEL_FLAG = 1
+                myTagFrag = inputItem
+                
+                try:
+                    FINAL_INPUT.remove(inputItem)
+                except:
+                    
+                    MYOUTPUT["items"].append({
+                    "title": "something is wrong with this label!",
+                    "subtitle": "does it contain a space and a closed parenthesis, or other very special characters?",
+                    "arg": "",
+                        "variables" : {
+                        "myIter": True,
+                        "myArg": MY_INPUT+" "
+                        },
+                    "icon": {
+                            "path": f"icons/Warning.png"
+                        }
+                    })
+                    print (json.dumps(MYOUTPUT))
+                    exit()
+            
+        elif inputItem.startswith('#'): # user trying to enter a project 
+            if inputItem.startswith("#(") and inputItem.endswith(")") and " " in inputItem: # user trying to enter a project  and there is a space and AlfreDO introduced parentheses 
+                inputItem = inputItem.replace("(","",1)
+                inputItem = inputItem.replace(")","")
+                inputItem = inputItem.strip()
+                    
+            
+            log (f"after checking: {inputItem}")
             if inputItem in myProjectListAll: # is this a real project? :
                 if "/" in inputItem: #there is a section
                     inputProject = inputItem.split("/")[0]
@@ -150,33 +187,42 @@ def main():
                     #log (idProj)
                     myFilterProjects.append (idProj)
             
-            else: # user trying to enter a project
+            else:
                 #log (f"project fragment: {inputItem}")
+                #log (f"final input: {FINAL_INPUT}")
                 PROJECT_FLAG = 1
-                myProjFrag = inputItem
+                #myProjFrag = inputItem
                 #log (inputItem)
-                FINAL_INPUT.remove(inputItem)
-            
-        
-        elif inputItem.startswith('@'): # user trying to enter a tag
-            #log (f"tag fragment: {inputItem}")
-            LABEL_FLAG = 1
-            myTagFrag = inputItem
-            FINAL_INPUT.remove(inputItem)
+                try:
+                    FINAL_INPUT.remove(inputItem)
+                except:
+                
+                    MYOUTPUT["items"].append({
+                    "title": "something is wrong with this project name!",
+                    "subtitle": "does it contain a space and a closed parenthesis, a forward slash, or other very special characters?",
+                    "arg": "",
+                    "variables" : {
+                        "myIter": True,
+                        "myArg": MY_INPUT+" "
+                        },
+                    "icon": {
+                            "path": f"icons/Warning.png"
+                        }
+                    })
+                    print (json.dumps(MYOUTPUT))
+                    exit()
         
 
         else: # user trying to enter a search string
             #log (f"search string fragment: {inputItem}")
             mySearchStrings.append (inputItem)
 
-    log (myFilterProjects)
-    log (myFilterSections)
     MY_INPUT = " ".join(FINAL_INPUT) #this is needed to allow multiple tags and projects in the input string
 
-    # log (f"filterlabels: {myFilterLabels}")
-    # log (f"filterprojects: {myFilterProjects}")
+    #log (f"filterlabels: {myFilterLabels}")
+    #log (f"filterprojects: {myFilterProjects}")
     # log (f"filtersections: {myFilterSections}")
-    # log (f"search strings: {mySearchStrings}")
+    #log (f"search strings: {mySearchStrings}")
    
     
     toShow = [item for item in toShow if (
@@ -198,15 +244,26 @@ def main():
 
     if LABEL_FLAG == 1:
         label_counts, myLabels = fetchLabels(toShow)
-        mySubset = [i for i in myLabels if myTagFrag.casefold() in i.casefold()]
+        #log (f"TAGfrag: {myTagFrag}")
+        #log (f"myLabels: {myLabels}")
+        
+        if PARTIAL_MATCH == 1: #searches anywhere in the string
+            mySubset = [i for i in myLabels if myTagFrag[1:].casefold() in i.casefold()]
+        else: #searches from the start
+            mySubset = [i for i in myLabels if myTagFrag.casefold() in i.casefold()]
         
         # adding a complete tag if the user selects it from the list
         if mySubset:
             for thislabel in mySubset:
-                if MY_INPUT:
-                    MY_ARG = f"{MY_INPUT} {thislabel} "
+                if " " in thislabel: #adding parentheses if there is a space in the project name
+                    thisLabel_string = f"@({thislabel[1:]})"
                 else:
-                    MY_ARG = f"{thislabel} "
+                    thisLabel_string = thislabel
+                    
+                if MY_INPUT:
+                    MY_ARG = f"{MY_INPUT} {thisLabel_string} "
+                else:
+                    MY_ARG = f"{thisLabel_string} "
                 MYOUTPUT["items"].append({
                 "title": f"{thislabel} ({label_counts[thislabel[1:]]})",
                 "subtitle": MY_INPUT,
@@ -225,8 +282,9 @@ def main():
             "title": "no labels matching",
             "subtitle": "try another query?",
             "variables" : {
-                    
-                    "myArg": MY_INPUT+" "
+                    "myIter": True,
+                    "myArg": MY_INPUT+" ",
+                    "myMode": MY_MODE
                     },
             "arg": "",
             "icon": {
@@ -238,12 +296,16 @@ def main():
 
     if PROJECT_FLAG == 1:
             project_counts, myProjectList = fetchProjects(toShow,myProjects,mySections)
-            mySubset = [i for i in myProjectList if myProjFrag.casefold() in i.casefold()]
+            
+            if PARTIAL_MATCH == 1: #searches anywhere in the project string (default)
+                mySubset = [i for i in myProjectList if myProjFrag[1:].casefold() in i.casefold()]
+            else: #searches from the start
+                mySubset = [i for i in myProjectList if myProjFrag.casefold() in i.casefold()]
             
             # adding a complete project name if the user selects it from the list
             if mySubset:
                 for thisProj in mySubset:
-                    if " " in thisProj:
+                    if " " in thisProj: #adding parentheses if there is a space in the project name
                         thisProj_string = f"#({thisProj[1:]})"
                     else:
                         thisProj_string = thisProj
@@ -270,8 +332,10 @@ def main():
                 "subtitle": "try another query?",
                 "arg": "",
                  "variables" : {
+                    "myIter": True,
+                    "myArg": MY_INPUT+" ",
+                    "myMode": MY_MODE
                     
-                    "myArg": MY_INPUT+" "
                     },
                 "icon": {
                         "path": f"icons/Warning.png"
@@ -328,7 +392,10 @@ def main():
             myMatchCount = len(toShow)
             if task ['due']:
                 if 'T' in task ['due']['date']:
-                    dueDate = datetime.strptime(task ['due']['date'], "%Y-%m-%dT%H:%M:%S")
+                    if 'Z' in task ['due']['date']:
+                        dueDate = datetime.strptime(task ['due']['date'], "%Y-%m-%dT%H:%M:%SZ")
+                    else:
+                        dueDate = datetime.strptime(task ['due']['date'], "%Y-%m-%dT%H:%M:%S")
                 else:
                     dueDate =datetime.strptime(task ['due']['date'] , '%Y-%m-%d')
                 if dueDate:
@@ -371,6 +438,13 @@ def main():
                     "myArg": MY_INPUT,
                     "myMode": MY_MODE
                     },
+             "mods": {
+                    "alt": {
+                        
+                        "arg": "",
+                        "subtitle": ""
+                                },
+             },
             "icon": {
                     "path": MYICON
                 },
@@ -386,13 +460,33 @@ def main():
         MYOUTPUT["items"].append({
                 "title": "no tasks matching your query 🙁",
                 "subtitle": "" ,
-                
+                 "variables" : {
+                    "myIter": True,
+                    "myArg": "",
+                    "myMode": MY_MODE
+                    
+                    },
                 "mods": {
                     "shift": {
                         
                         "arg": "",
                         "subtitle": "nothing to see here"
-                                }
+                                },
+                    "cmd": {
+                        
+                        "arg": "",
+                        "subtitle": "nothing to see here"
+                                },         
+                    "ctrl": {
+                        
+                        "arg": "",
+                        "subtitle": "nothing to see here"
+                                },         
+                    "alt": {
+                        
+                        "arg": "",
+                        "subtitle": "nothing to see here"
+                                },         
                     
                         },
                 "arg": ""

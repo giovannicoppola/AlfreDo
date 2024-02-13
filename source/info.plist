@@ -113,6 +113,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -141,16 +151,6 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>47D97373-8433-4825-8730-B8622E2C269D</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</string>
 				<key>modifiers</key>
 				<integer>262144</integer>
@@ -161,7 +161,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<string>47D97373-8433-4825-8730-B8622E2C269D</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -182,6 +182,16 @@
 		</array>
 		<key>47D97373-8433-4825-8730-B8622E2C269D</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
@@ -222,16 +232,6 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>81A7FDDF-890B-49BE-907D-7ACFD33A1332</string>
 				<key>modifiers</key>
 				<integer>131072</integer>
@@ -260,16 +260,6 @@
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
 				<string>reschedule this task ↪️</string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -422,6 +412,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>16597C9F-FD3C-4531-8E13-4D4253644CC4</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -483,38 +483,6 @@
 	<string>AlfreDo</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>conditions</key>
-				<array>
-					<dict>
-						<key>inputstring</key>
-						<string>{var:myIter}</string>
-						<key>matchcasesensitive</key>
-						<false/>
-						<key>matchmode</key>
-						<integer>5</integer>
-						<key>matchstring</key>
-						<string></string>
-						<key>outputlabel</key>
-						<string>recur</string>
-						<key>uid</key>
-						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
-					</dict>
-				</array>
-				<key>elselabel</key>
-				<string>else</string>
-				<key>hideelse</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.conditional</string>
-			<key>uid</key>
-			<string>47D97373-8433-4825-8730-B8622E2C269D</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -702,6 +670,38 @@ python3 alfredo_ops.py "findDate" "$myTaskID" "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:myIter}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>5</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>recur</string>
+						<key>uid</key>
+						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>47D97373-8433-4825-8730-B8622E2C269D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>dueToday</string>
 				<key>passinputasargument</key>
@@ -744,38 +744,6 @@ fi</string>
 			<string>8626AD51-37A7-478D-9561-F5F20EF86C08</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>conditions</key>
-				<array>
-					<dict>
-						<key>inputstring</key>
-						<string>{var:myIter}</string>
-						<key>matchcasesensitive</key>
-						<false/>
-						<key>matchmode</key>
-						<integer>5</integer>
-						<key>matchstring</key>
-						<string></string>
-						<key>outputlabel</key>
-						<string>recur</string>
-						<key>uid</key>
-						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
-					</dict>
-				</array>
-				<key>elselabel</key>
-				<string>else</string>
-				<key>hideelse</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.conditional</string>
-			<key>uid</key>
-			<string>CF0E1859-2656-4994-96F9-BE03DFFD1B19</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -930,6 +898,38 @@ python3 alfredo-query.py "due" "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:myIter}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>5</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>recur</string>
+						<key>uid</key>
+						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>CF0E1859-2656-4994-96F9-BE03DFFD1B19</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>overdue</string>
 				<key>passinputasargument</key>
@@ -1072,6 +1072,37 @@ python3 alfredo-query.py "today" "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>28C94810-BE49-43D5-A1CF-8B1008F6EF69</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -1100,37 +1131,6 @@ python3 alfredo-query.py "today" "$1"</string>
 			<string>27453929-F779-489C-B8BC-0F9487E32744</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>0</integer>
-				<key>hotmod</key>
-				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>28C94810-BE49-43D5-A1CF-8B1008F6EF69</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1451,6 +1451,25 @@ python3 alfredo_ops.py "rebuild" "$1"
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>externaltriggerid</key>
+				<string>newTask</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>23271A22-E8F2-44F6-8E4C-FCB12BC009E2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>acceptsfiles</key>
 				<false/>
 				<key>acceptsmulti</key>
@@ -1466,25 +1485,6 @@ python3 alfredo_ops.py "rebuild" "$1"
 			<string>alfred.workflow.trigger.universalaction</string>
 			<key>uid</key>
 			<string>6F8965A3-DFDB-487E-B942-88D5925BB596</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>newTask</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>23271A22-E8F2-44F6-8E4C-FCB12BC009E2</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1514,7 +1514,7 @@ python3 alfredo_ops.py "rebuild" "$1"
 				<key>queuemode</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
-				<string>⏳... fetching data</string>
+				<string>⏳... moving data ...</string>
 				<key>script</key>
 				<string>export PYTHONPATH="$PWD/lib"
 python3 alfredo_ops.py "parse" "$1"</string>
@@ -1626,6 +1626,7 @@ python3 alfredo_ops.py "newTask" "$1"</string>
 An Alfred Workflow for [Todoist](https://todoist.com/)
 ![](AlfreDo.png)
 
+
 # Motivation ✅
 - Quickly list, search, and act on your Todoist tasks 
 - Add new tasks to Todoist through Alfred
@@ -1654,6 +1655,8 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 		- Database is automatically refreshed when a task is created, completed, or rescheduled.
 		- Refresh can be forced using a keyword (default: `todoist::refresh`) or hotkey.
 	- show Karma daily and weekly goals? Default: `yes`
+	- partial match search? Default: `yes`. Search projects and labels anywhere in the string. Will search from start if unchecked
+	- open task in Todoist app, or website
 
 # Basic Usage 📖
 
@@ -1663,15 +1666,18 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 - Once a task is selected, you can do one of three things: 
 	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/)
 	- `shift-enter` ⇧↩️ will complete the task
-	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
 	
 ## Creating new tasks ⭐
-- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
+- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels (new ones can be created here), `#` to enter a project (`Inbox` will be used if none entered), `due:` to enter a due date, `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).  
 - Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 
 ## Database refresh 🔄
 - will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, or rescheduled, or...
-	- `todoist::refresh` to force database refresh</string>
+	- `todoist::refresh` to force database refresh
+
+## Questions? 🙋
+Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</string>
 	<key>uidata</key>
 	<dict>
 		<key>0841840C-1195-49B2-8309-B337E6891779</key>
@@ -1702,23 +1708,23 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 		<key>16597C9F-FD3C-4531-8E13-4D4253644CC4</key>
 		<dict>
 			<key>xpos</key>
-			<real>745</real>
+			<real>790</real>
 			<key>ypos</key>
 			<real>510</real>
 		</dict>
 		<key>23271A22-E8F2-44F6-8E4C-FCB12BC009E2</key>
 		<dict>
 			<key>xpos</key>
-			<real>1570</real>
+			<real>1575</real>
 			<key>ypos</key>
-			<real>955</real>
+			<real>950</real>
 		</dict>
 		<key>27453929-F779-489C-B8BC-0F9487E32744</key>
 		<dict>
 			<key>xpos</key>
-			<real>710</real>
+			<real>700</real>
 			<key>ypos</key>
-			<real>375</real>
+			<real>395</real>
 		</dict>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
 		<dict>
@@ -1757,7 +1763,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>xpos</key>
 			<real>690</real>
 			<key>ypos</key>
-			<real>20</real>
+			<real>55</real>
 		</dict>
 		<key>4EEF423D-B6D9-4EB4-BFE9-5DDBEBC99391</key>
 		<dict>
@@ -1838,9 +1844,9 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>note</key>
 			<string>Open task in app or todoist website</string>
 			<key>xpos</key>
-			<real>1320</real>
+			<real>1310</real>
 			<key>ypos</key>
-			<real>195</real>
+			<real>185</real>
 		</dict>
 		<key>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</key>
 		<dict>
@@ -1941,7 +1947,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 			<key>xpos</key>
 			<real>690</real>
 			<key>ypos</key>
-			<real>200</real>
+			<real>225</real>
 		</dict>
 		<key>D3080812-B0C2-4214-B800-8CB5E9651ED1</key>
 		<dict>
@@ -2094,16 +2100,35 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 				<key>required</key>
 				<false/>
 				<key>text</key>
-				<string>Show Daily and Weekly Goals?</string>
+				<string>Show Karma Daily and Weekly Goals?</string>
 			</dict>
 			<key>description</key>
 			<string></string>
 			<key>label</key>
-			<string>Show Karma goals</string>
+			<string></string>
 			<key>type</key>
 			<string>checkbox</string>
 			<key>variable</key>
 			<string>SHOW_GOALS</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Partial Match Search?</string>
+			</dict>
+			<key>description</key>
+			<string>Search projects and labels anywhere in the string. Will search from start if unchecked.</string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>PARTIAL_MATCH</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -2156,7 +2181,7 @@ An Alfred Workflow for [Todoist](https://todoist.com/)
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.3.1</string>
+	<string>0.4</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>

@@ -56,6 +56,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 		- Database is automatically refreshed when a task is created, completed, or rescheduled.
 		- Refresh can be forced using a keyword (default: `todoist::refresh`) or hotkey.
 	- show Karma daily and weekly goals? Default: `yes`
+	- partial match search? Default: `yes`. Search projects and labels anywhere in the string. Will search from start if unchecked
 	- open task in Todoist app, or website
 
 
@@ -69,11 +70,12 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
 	- `shift-enter` ⇧↩️ will complete the task
 	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+	- Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
 ![](images/reschedule.png)
 	
 
 ## Creating new tasks ⭐
-- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels, `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks)  
+- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels (new ones can be created here), `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date, `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 ![](images/universalAction.png)
 
@@ -100,11 +102,13 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	- https://www.flaticon.com/free-icon/task_2098402
 	- https://www.flaticon.com/free-icon/check_10308323
 	- https://www.flaticon.com/free-icon/bowler-hat_3345848
+	- https://www.flaticon.com/free-icon/new_3634451
 - Thanks to Werner Dijkerman for help with troubleshooting. 
 	
 	
 <h1 id="changelog">Changelog 🧰</h1>
 
+- 02-13-2024: version 0.4 new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md))
 - 11-10-2023: version 0.3 support for app, bug fixes
 - 06-10-2023: version 0.2.2 support for sections, international date, time, supporting spaces in project names
 - 05-03-2023: version 0.1

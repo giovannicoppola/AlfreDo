@@ -5,9 +5,10 @@ import json
 from datetime import datetime, date, timedelta
 import sys
 import os
-from config import TOKEN, MY_DATABASE, RefRate, MY_LABEL_COUNTS, MY_PROJECT_COUNTS
+from config import TOKEN, MY_DATABASE, RefRate, MY_LABEL_COUNTS, MY_PROJECT_COUNTS, PARTIAL_MATCH
 import uuid
 import re
+
 
 """
 
@@ -269,7 +270,7 @@ def getTodoistData ():
     with open(MY_LABEL_COUNTS,'w') as myFile:
          json.dump(myAllLabelCounts,myFile,indent=4)
 
-
+    # prepare project file
     myAllProjectCounts = fetchAllActiveProjects (myData['items'],myData['projects'],myData['sections'])
     with open(MY_PROJECT_COUNTS,'w') as myFile:
          json.dump(myAllProjectCounts,myFile,indent=4)
@@ -285,17 +286,21 @@ def readTodoistData ():
     myUser=mydata['user']
     return myTasks, mySections, myProjects, myStats, myUser
 
-def createNewTask (taskContent,taskLabels,taskProjectID,taskSectionID,myDueDate):
+def createNewTask (taskContent,taskLabels,taskProjectID,taskSectionID,myDueDate, myPriority):
     
     url = 'https://api.todoist.com/sync/v9/sync'
     MY_UUID = generate_uuid()
     MY_TEMPID = generate_uuid()
-    taskLabels = taskLabels.split(',')
     
+    log (f"task labels: {taskLabels}")
+    
+    taskLabels = taskLabels.split(',,..,,')
+    log (f"task labels: {taskLabels}")
+
     headers = {
         "Authorization": f"Bearer {TOKEN}",
     }
-
+    
     data = {
         "commands": json.dumps([
             {
@@ -307,7 +312,8 @@ def createNewTask (taskContent,taskLabels,taskProjectID,taskSectionID,myDueDate)
                     "labels": taskLabels,
                     "project_id": taskProjectID,
                     "section_id": taskSectionID,
-                    "due": {"date": myDueDate}
+                    "due": {"date": myDueDate},
+                    "priority": myPriority
                 }
             }
         ])
@@ -325,10 +331,68 @@ def createNewTask (taskContent,taskLabels,taskProjectID,taskSectionID,myDueDate)
         print ("❌ server error\ncheck debugger")
     
 
+def createLabel (myNewLabel):
+    """
+    a function to create a new todoist label
+    """
+
+    url = 'https://api.todoist.com/sync/v9/sync'
+    MY_UUID = generate_uuid()
+    MY_TEMPID = generate_uuid()
+    
+    
+    headers = {
+        "Authorization": f"Bearer {TOKEN}",
+    }
+
+    data = {
+        "commands": json.dumps([
+            {
+                "type": "label_add",
+                "uuid": MY_UUID,
+                "temp_id": MY_TEMPID,
+                "args": {
+                    "name": myNewLabel
+                    
+                }
+            }
+        ])
+    }
+
+    response = requests.post(url, headers=headers, data=data)
+
+    log(response.content)
+    myResponse = response.json()
+       
+    if (myResponse['sync_status'][MY_UUID]) == "ok":
+        log ("🎯 label added")
+        
+        # adding the new label to the label list to allow task creation (the list will be overwritten when the task is created)
+
+        # Read the labels file
+        with open(MY_LABEL_COUNTS, 'r') as file:
+            data = json.load(file)
+
+        # Add the new label
+        data[myNewLabel] = 0
+
+        # Write the updated data back to the file
+        with open(MY_LABEL_COUNTS, 'w') as file:
+            json.dump(data, file, indent=4)
+
+        
+
+    else:
+        log ("❌ server error")
+        exit()
+    
+    
+    
+
 def parseNewTask (myInput):
     # fetching saved data and counts 
     allTasks, mySections, myProjects, myStats, myUser = readTodoistData()
-    #label_counts, myLabelsAll = fetchLabels(allTasks) #this should be replaced with a list that includes all the active labels (including those with no tasks)
+    
     
     ## LABELS
     with open(MY_LABEL_COUNTS,'r') as myFile:
@@ -336,12 +400,12 @@ def parseNewTask (myInput):
     myLabelListAll = list (label_counts)
     myLabelListAll = ['@' + s for s in myLabelListAll]
     
-    #project_counts,myProjectListAll = fetchProjects(allTasks,myProjects,mySections)
+    
     section_counts,mySectionListAll, section_ParentProjects = fetchSections(allTasks,mySections,myProjects)
     myTags = []
     taskProjectName = ''
     
-    ## LABELS
+    ## PROJECTS
     with open(MY_PROJECT_COUNTS,'r') as myFile:
          project_counts = json.load(myFile)
     myProjectListAll = list (project_counts)
@@ -354,25 +418,92 @@ def parseNewTask (myInput):
     
     def parseInput(MY_INPUT):
     
-        pattern = r'\s*(#\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parenthese and preceded by #
+        pattern = r'\s*([@#]\([^)]+\)|\S+)\s*' #keeps together elements with space if they are in parenthese and preceded by # or @
         result = re.findall(pattern, MY_INPUT)
     
         return (result)
     
     myInputElements = parseInput (myInput)
-    log (myInputElements)
+    log (f"input elements: {myInputElements}")
+    
     for myInputItem in myInputElements:
+        #log (f" input item: {myInputItem}")
         
-        if myInputItem.strip() in myLabelListAll: # is this a real tag? 
+        if myInputItem.startswith('@'): #user trying to add a label
+            if myInputItem.startswith("@(") and myInputItem.endswith(")") and " " in myInputItem: #there is a space and AlfreDO introduced parentheses 
+                    myInputItem = myInputItem.replace("(","",1)
+                    myInputItem = myInputItem.replace(")","")
+                    myInputItem = myInputItem.strip()
             
-            myTags.append (myInputItem[1:])    
+            if myInputItem.strip() in myLabelListAll: # is this a real label? 
+                
+                myTags.append (myInputItem[1:]) 
+        
+            else:
+                if PARTIAL_MATCH == 1:
+                    mySubset = [i for i in myLabelListAll if myInputItem[1:].casefold() in i.casefold()]
+                else:
+                    mySubset = [i for i in myLabelListAll if myInputItem.casefold() in i.casefold()]    
+                    
+                # adding a complete tag if the user selects it from the list
+                if mySubset:
+                    myInputElements.remove(myInputItem)
+                    myInput = " ".join(myInputElements)
+                    
+                    for thislabel in mySubset:
+                        if " " in thislabel: #adding parentheses if there is a space in the project name
+                            thisLabel_string = f"@({thislabel[1:]})"
+                        else:
+                            thisLabel_string = thislabel
+                        if myInput:
+                            MY_ARG = f"{myInput} {thisLabel_string} "
+                            
+                        else:
+                            MY_ARG = f"{thisLabel_string} "
+                        
+                        MYOUTPUT["items"].append({
+                        "title": f"{thislabel} ({label_counts[thislabel[1:]]})",
+                        "subtitle": MY_ARG,
+                        "arg": MY_ARG,
+                        "variables" : {
+                            
+                            },
+                        "icon": {
+                                "path": f"icons/label.png"
+                            }
+                        })
+                        
+
+                else:
+                
+                    MYOUTPUT["items"].append({
+                    "title": f"no labels matching, create a new label named '{myInputItem[1:]}'?",
+                    "subtitle": "↩️ to create a new label 🏷️",
+                    "arg": f"{myInput} ",
+                    "variables" : {
+                        "mySource": "createLabel",
+                        "myNewLabel": myInputItem[1:],
+                            },
+                    "icon": {
+                            "path": f"icons/newLabel.png"
+                        }
+                    })
+                print (json.dumps(MYOUTPUT))
+                
+                exit()
+        
+            
         
         elif myInputItem.startswith('#'): # user trying to enter a project 
-            if "(" in myInputItem: #there is a space and AlfreDO introduced parentheses (which are not allowed in project names)
-                myInputItem = myInputItem.replace("(","")
-                myInputItem = myInputItem.replace(")","")
+            # at the time of the first version of the workflow, parentheses and other special characters were not allowed in project names, and I used them to allow spaces in Alfred's window
+            # in July 2023 they were allowed.
+            
+            if myInputItem.startswith("#(") and myInputItem.endswith(")") and " " in myInputItem: #there is a space and AlfreDO introduced parentheses 
+                myInputItem = myInputItem.replace("(","",1)
+                myInputItem = myInputItem.replace(")","") #there will be one closing parenthesis only
                 myInputItem = myInputItem.strip()
-        
+            
+            
             if myInputItem.strip() in myProjectListAll: # is this a real project? 
                 if "/" in myInputItem:
                     taskProjectName = myInputItem.split("/")[0]
@@ -384,14 +515,14 @@ def parseNewTask (myInput):
                     taskProjectName = myInputItem
                     taskProjectID = get_project_id (myProjects,myInputItem[1:])
                     
-        # elif myInputItem.strip() in mySectionListAll: # is this a real section? 
-        #     taskSectionName = myInputItem
-        #     taskSectionID = get_project_id (mySections,myInputItem[1:])
-        
-            else: #user trying to add a project
+       
+            else: #user trying to add a project 
                 
-                mySubset = [i for i in myProjectListAll if myInputItem.casefold() in i.casefold()]
-                log (f"INPUT ITEM: {myInputItem}")
+                if PARTIAL_MATCH == 1:
+                    mySubset = [i for i in myProjectListAll if myInputItem[1:].casefold() in i.casefold()]
+                else:
+                    mySubset = [i for i in myProjectListAll if myInputItem.casefold() in i.casefold()]
+                #log (f"INPUT ITEM: {myInputItem}")
                 
                 # adding a complete project name if the user selects it from the list
                 if mySubset:
@@ -435,104 +566,34 @@ def parseNewTask (myInput):
                 print (json.dumps(MYOUTPUT))
                 exit()
             
-
-        elif myInputItem.startswith('@'): #user trying to add a label
-            
-            mySubset = [i for i in myLabelListAll if myInputItem.casefold() in i.casefold()]
-            
-            
-            # adding a complete tag if the user selects it from the list
-            if mySubset:
-                myInputElements.remove(myInputItem)
-                myInput = " ".join(myInputElements)
-                
-                for thislabel in mySubset:
-                    if myInput:
-                        MY_ARG = f"{myInput} {thislabel} "
-                        
-                    else:
-                        MY_ARG = f"{thislabel} "
-                    
-                    MYOUTPUT["items"].append({
-                    "title": f"{thislabel} ({label_counts[thislabel[1:]]})",
-                    "subtitle": MY_ARG,
-                    "arg": MY_ARG,
-                    "variables" : {
-                        
-                        },
-                    "icon": {
-                            "path": f"icons/label.png"
-                        }
-                    })
-                    
-
-            else:
-                MYOUTPUT["items"].append({
-                "title": "no labels matching",
-                "subtitle": "try another query?",
-                "arg": MY_INPUT+" ",
-                "icon": {
-                        "path": f"icons/Warning.png"
-                    }
-                })
-            print (json.dumps(MYOUTPUT))
-            
-            exit()
     
-        
-        # elif myInputItem.startswith('^'): #user trying to add a section
-            
-        #     mySubset = [i for i in mySectionListAll if myInputItem.casefold() in i.casefold()]
-            
-            
-        #     # adding a complete project name if the user selects it from the list
-        #     if mySubset:
-        #         myInputElements.remove(myInputItem)
-        #         myInput = " ".join(myInputElements)
-                
-        #         for thisSect in mySubset:
-        #             if myInput:
-        #                 MY_ARG = f"{myInput} {thisSect} "
-        #             else:
-        #                 MY_ARG = f"{thisSect} "
-        #             MYOUTPUT["items"].append({
-        #             "title": f"{thisSect} ({section_ParentProjects[thisSect[1:]]}, {section_counts[thisSect[1:]]})",
-        #             "subtitle": MY_ARG,
-        #             "arg": MY_ARG,
-        #             "variables" : {
-                        
-        #                 },
-        #             "icon": {
-        #                     "path": f"icons/section.png"
-        #                 }
-        #             })
-        #     else:
-        #         MYOUTPUT["items"].append({
-        #         "title": "no section matching",
-        #         "subtitle": "try another query?",
-        #         "arg": "",
-        #          "variables" : {
-                    
-        #             "myArg": MY_INPUT+" "
-        #             },
-        #         "icon": {
-        #                 "path": f"icons/Warning.png"
-        #             }
-        #         })
-        #     print (json.dumps(MYOUTPUT))
-        #     exit()
-        
+        # priority
+        elif myInputItem.strip().casefold() in ['p1','p2','p3','p4']: #user trying to enter a priority
+            #log (f"priority {myInputItem}")
+            prioString = myInputItem.strip().casefold()
+
+
         elif myInputItem.startswith ('due:'):
             # check first if there is a due date already 
-            patternDue = r'due:(\d+)d'
-            matchDue = re.search(patternDue, myInputItem)
+            
+            matchDue = re.search(r'due:(\d+)d$', myInputItem)
+            matchDueHour = re.search(r'due:(\d+)d(\d{2}:\d{2})$', myInputItem)
             matchINT = re.match(r'^due:(\d{4}-\d{2}-\d{2})$', myInputItem)
             matchINThour = re.match(r'^due:(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})$',myInputItem)
 
                         
             if matchDue:
                dueString = getNewDate (int(matchDue.group(1)),F=False)
-               #log (dueString)
+               
+            elif matchDueHour:
+                myTime = matchDueHour.group(2)
+                dueString = getNewDate (int(matchDueHour.group(1)),F=False)
+                if validateTime (myTime):
+                    dueString = f"{dueString}T{myTime}"
+                else:
+                    log ("invalid time") 
+                
+
             elif matchINT:
                 dueString = matchINT.group(1)
                 #log (dueString)
@@ -540,7 +601,7 @@ def parseNewTask (myInput):
                 dueString = matchINThour.group(1)
                 #log (dueString)                            
             else:
-                customDays = myInputItem.split(':')[1]
+                customDays = myInputItem.split(':',1)[1]
                 myInput = " ".join(myInputElements)
                 dueMenu(customDays,myInput)
                 exit()
@@ -550,24 +611,27 @@ def parseNewTask (myInput):
     myTaskElements = parseInput (myInput)
     
     for xxx in myTaskElements[:]:
-        if xxx.startswith('@') or xxx.startswith('#') or xxx.startswith('^') or xxx.startswith('due:'):
+        if xxx.startswith('@') or xxx.startswith('#') or xxx.startswith('^') or xxx.startswith('due:') or xxx in ['p1','p2','p3','p4']:
             myTaskElements.remove(xxx)
         
     
     MY_TASK_TEXT = " ".join (myTaskElements)
     
-    myTagString = ",".join(myTags)
+    myTagString = ",,..,,".join(myTags) # added complicated delim so that commas are allowed. will fail if a user has that in their labels
     if myTagString:
-        myTagStringF = f"🏷️{myTagString}"
+        myTagStringK = ",".join(myTags)
+        myTagStringF = f"🏷️{myTagStringK}"
     else:
         myTagStringF = ''
     
+    # dueString
     try:
         dueStringF = f"🗓️ due:{dueString}"
     except NameError:
         dueString = ""
         dueStringF = ""
 
+    # section string
     try:
         mySectStringF = f"🧩 section:{taskSectionName}"
     except NameError:
@@ -575,6 +639,25 @@ def parseNewTask (myInput):
         mySectStringF = ""
         taskSectionID = None
     
+    # priority string
+    try:
+        if prioString == 'p1':
+            prioStringF = 'p1️⃣'
+            myPriority = 4  #the priority in the API is inverted (4= top priority)
+
+        elif prioString == 'p2':
+            prioStringF = 'p2️⃣'
+            myPriority = 3  
+        elif prioString == 'p3':
+            prioStringF = 'p3️⃣'
+            myPriority = 2
+        elif prioString == 'p4':
+            prioStringF = ''
+            myPriority = 1
+    except NameError:
+        myPriority = 1
+        prioStringF = ''
+
     if taskProjectName:
         if "/" in taskProjectName:
             myProj = taskProjectName.split("/")[0]
@@ -608,14 +691,15 @@ def parseNewTask (myInput):
 
     MYOUTPUT["items"].append({
                 "title": MY_TASK_TEXT,
-                "subtitle": f"{myProjStringF} {mySectStringF} {myTagStringF} {dueStringF} ⇧↩️ to create",
+                "subtitle": f"{myProjStringF} {mySectStringF} {myTagStringF} {prioStringF} {dueStringF} ⇧↩️ to create",
                 "arg": myInput,
                 "variables" : {
                 "myTaskText": MY_TASK_TEXT,
                 "myTagString": myTagString,
                 "myProjectID": taskProjectID,
                 "mySectionID": taskSectionID,
-                "myDueDate": dueString
+                "myDueDate": dueString,
+                "myPriority": myPriority
                     },
                 "icon": {
                         "path": f"icons/newTask.png"
@@ -681,19 +765,22 @@ def checkingTime ():
             
 
 def getNewDate(myDays, F = True):
+    # the F argument is for formatting (year at the end). If false, it will return an international date string format
     timeToday = date.today()
     delta = timedelta(days=myDays)
     finalTime = timeToday+delta
-    finalTimeF = finalTime.strftime("%A, %B %d, %Y")
-    finalTimeFS = finalTime.strftime("%Y-%m-%d")
+    
     if F == True:
+        finalTimeF = finalTime.strftime("%A, %B %d, %Y")
         return finalTimeF
     else:
+        finalTimeFS = finalTime.strftime("%Y-%m-%d")
         return finalTimeFS
 
 def reschMenu(customDays):
     taskContent = os.getenv('myTaskContent')
     pattern = r'^(\d+)([wm]?)$'
+    pattern = r'^(\d+)([wm]?)(?:([01]\d|2[0-3]):([0-5]\d))?$' 
     match = re.match(pattern, customDays)
     matchINT = re.match(r'^\d{4}-\d{2}-\d{2}$', customDays)
     matchINThour = re.match(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$',customDays)
@@ -747,7 +834,12 @@ def reschMenu(customDays):
                         )
         
     elif match:
-        num_str, letter = match.groups()
+        num_str, letter, myHours,myMinutes = match.groups()
+        if myHours and myMinutes:
+            myTimeString = (f", {myHours}:{myMinutes}")
+            myTimeStringSF = f"{myHours}:{myMinutes}"
+        else:
+            myTimeString = myTimeStringSF = ''
         num = int(num_str)
         if letter == 'w':
             num *= 7
@@ -759,9 +851,9 @@ def reschMenu(customDays):
         else:
             dayString = 'days'
         MYOUTPUT["items"].append({
-                        "title": f"Reschedule in {num:,} {dayString} 🗓️ {getNewDate(num)}",
+                        "title": f"Reschedule in {num:,} {dayString} 🗓️ {getNewDate(num)}{myTimeString}",
                         "subtitle": taskContent,
-                        "arg": num,
+                        "arg": f"{num}d{myTimeStringSF}",
                         "variables" : {
                             },
                         "icon": {
@@ -804,8 +896,8 @@ def reschMenu(customDays):
                         })
     else:
         MYOUTPUT["items"].append({
-                        "title": f"Incorrect format!",
-                        "subtitle": "enter an integer (days) or add 'w' (weeks) or 'm' (months)",
+                        "title": f"Invalid format!",
+                        "subtitle": "enter an integer (days) or add 'w' (weeks) or 'm' (months). Optional: time in 24h format",
                         "arg": '',
                         "variables" : {
                             },
@@ -816,19 +908,44 @@ def reschMenu(customDays):
     print (json.dumps(MYOUTPUT))
 
 
+
+def validateTime(time_str):
+    # Split the time string into hours and minutes
+
+    hours, minutes = map(int, time_str.split(":"))
+    # Check if hours and minutes are within valid ranges
+    if 0 <= hours < 24 and 0 <= minutes < 60:
+        return True
+    else:
+        return False
+
+
+
 def dueMenu(customDays,inputThrough):
+    """
+    the goal of this function is to take the string after `due` and evaluate it to create a due date (and possibly time)
+    Possibilities:
+    1. single number: assumed days
+    2. number plus d,w,m: calculate weeks, months
+    3. #2, but with time after (e.g. 10d10:13)
+    """
     
-    pattern = r'^(\d+)([wm]?)$'
+    pattern = r'^(\d+)([wm]?)(?:([01]\d|2[0-3]):([0-5]\d))?$' 
+    # matches a number, with or without [wm], with or without time in 24h format
+    
+    #pattern = r'^(\d+)([wm]?)$'
+    
+    log (f"input:{customDays}")
     match = re.match(pattern, customDays)
 
-    patternDue = r'(?<=due:)\d*[wm]?'
+    patternDue = r'(?<=due:)\d*[wm]?(?:([01]\d|2[0-3]):([0-5]\d))?'
     
-    inputThroughF = re.sub(patternDue, '', inputThrough)
+    inputThroughF = re.sub(patternDue, '', inputThrough) #replace the due: string in the passthrough text
     
-
+    
     MYOUTPUT = {"items": []}
     
-    if customDays == '':
+    if customDays == '': #if no days are entered, show predefined menu options
         MYOUTPUT["items"].extend([{
                         "title": f"Due today 🗓️ {getNewDate(0)} 🔥",
                         "subtitle": '',
@@ -872,8 +989,14 @@ def dueMenu(customDays,inputThrough):
                         
                         )
         
-    elif match:
-        num_str, letter = match.groups()
+    elif match: #if there is a match (one number at least)
+        num_str, letter, myHours,myMinutes = match.groups()
+        
+        if myHours and myMinutes:
+            myTimeString = (f", {myHours}:{myMinutes}")
+            myTimeStringSF = f"{myHours}:{myMinutes}"
+        else:
+            myTimeString = myTimeStringSF = ''
         num = int(num_str)
         if letter == 'w':
             num *= 7
@@ -885,9 +1008,9 @@ def dueMenu(customDays,inputThrough):
         else:
             dayString = 'days'
         MYOUTPUT["items"].append({
-                        "title": f"Due in {num:,} {dayString} 🗓️ {getNewDate(num)}",
+                        "title": f"Due in {num:,} {dayString} 🗓️ {getNewDate(num)}{myTimeString}",
                         "subtitle": '',
-                        "arg": f"{inputThroughF}{num}d ",
+                        "arg": f"{inputThroughF}{num}d{myTimeStringSF} ",
                         "variables" : {
                             },
                         "icon": {
@@ -897,8 +1020,8 @@ def dueMenu(customDays,inputThrough):
     
     else:
         MYOUTPUT["items"].append({
-                        "title": f"Incorrect format!",
-                        "subtitle": "enter an integer (days) or add 'w' (weeks) or 'm' (months)",
+                        "title": f"Invalid format!",
+                        "subtitle": "enter an integer (days) or add 'w' (weeks) or 'm' (months). Optional: time in 24h format",
                         "arg": '',
                         "variables" : {
                             },
@@ -910,9 +1033,15 @@ def dueMenu(customDays,inputThrough):
 
 
 def rescheduleTask (days,taskID):
-    if '-' in days: #if the full date was provided
+    if '-' in days: #if the full INT date was provided
         newDate = days
+    elif ':' in days: #date and time were provided
+        days,myTime = days.split('d',1)
+        newDate = getNewDate(int(days),F=False)
+        if myTime:
+            newDate = f"{newDate}T{myTime}"
     else:
+        
         newDate = getNewDate(int(days),F=False)
     
     log (f"days to reschedule: {days}, {taskID}, {newDate}")
@@ -965,6 +1094,24 @@ def forceRebuild():
     
 
 def main():
+    mySource = os.getenv('mySource')
+    
+    if mySource == 'createLabel':
+        # apparently it is not possible to reset an environment variable (tried os.environ['mySource'] = "") without restarting the script filter object
+        # this would result in the filter trying to create the same new label multiple times. 
+        # this workaround checks if the label is in the list of labels
+        # might not be needed if there is a way to reset the environment variable mySource without restarting the script filter
+        
+        myNewLabel = os.getenv('myNewLabel')
+        
+        with open(MY_LABEL_COUNTS,'r') as myFile: # checking that the new label has not been already added
+            label_counts = json.load(myFile)
+            myLabelListAll = list (label_counts)
+        
+        if myNewLabel not in myLabelListAll:
+            createLabel (myNewLabel)
+        
+
     if MY_COMMAND == "complete":
         completeTask (MY_INPUT)
 
@@ -987,8 +1134,9 @@ def main():
         taskProjectID = os.getenv('myProjectID')
         taskSectionID = os.getenv('mySectionID')
         myDueDate = os.getenv('myDueDate')
+        myPriority = os.getenv('myPriority')
         
-        createNewTask (taskText,taskLabels,taskProjectID, taskSectionID, myDueDate)
+        createNewTask (taskText,taskLabels,taskProjectID, taskSectionID, myDueDate, myPriority)
 
     if MY_COMMAND == "parse":
      

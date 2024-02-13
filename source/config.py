@@ -21,6 +21,7 @@ MY_PROJECT_COUNTS = f"{DATA_FOLDER}/projectCounts.json"
 
 
 SHOW_GOALS = int(os.getenv('SHOW_GOALS')) 
+PARTIAL_MATCH = int(os.getenv('PARTIAL_MATCH')) 
 RefRate = int(os.getenv('RefreshRate'))
 
 
