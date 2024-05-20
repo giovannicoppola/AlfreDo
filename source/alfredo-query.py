@@ -191,7 +191,7 @@ def main():
                 #log (f"project fragment: {inputItem}")
                 #log (f"final input: {FINAL_INPUT}")
                 PROJECT_FLAG = 1
-                #myProjFrag = inputItem
+                myProjFrag = inputItem
                 #log (inputItem)
                 try:
                     FINAL_INPUT.remove(inputItem)

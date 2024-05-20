@@ -2181,7 +2181,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.4</string>
+	<string>0.4.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>
