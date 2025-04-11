@@ -12,7 +12,7 @@
 import json
 from datetime import datetime
 import sys
-from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData, fetchSections
+from alfredo_ops import log, get_project_id, get_project_name,fetchLabels,fetchProjects, checkingTime,readTodoistData, fetchSections, normalize_unicode
 from config import SHOW_GOALS, PARTIAL_MATCH
 import re
 
@@ -122,7 +122,7 @@ def main():
             # 4. a non-existent tag (will be dealt with in the dropdown)
             # 5. a badly parsed tag (containing a space and a closed parenthesis)
         
-
+        inputItem = normalize_unicode(inputItem) # normalizing the input string to avoid problems with special characters
 
         if inputItem.startswith('@'): # user trying to enter a tag
         #log (f"tag fragment: {inputItem}")
