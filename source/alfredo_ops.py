@@ -9,6 +9,7 @@ from config import TOKEN, MY_DATABASE, RefRate, MY_LABEL_COUNTS, MY_PROJECT_COUN
 import uuid
 import re
 
+import unicodedata
 
 """
 
@@ -49,12 +50,19 @@ def get_parent_project_name(sections, projects, id):
     return None
 
 
+# def get_project_id(projects, nameP):
+#     for project in projects:
+#         if project["name"] == nameP:
+#             return project["id"]
+#     return None
+
 def get_project_id(projects, nameP):
+    normalized_nameP = unicodedata.normalize('NFC', nameP)  # Combine accents + base chars
     for project in projects:
-        if project["name"] == nameP:
+        project_name = unicodedata.normalize('NFC', project["name"])
+        if project_name == normalized_nameP:
             return project["id"]
     return None
-
 def get_section_id(projects, sections, nameS):
     myProj = nameS.split("/")[0][1:]
     log (myProj)
@@ -387,7 +395,8 @@ def createLabel (myNewLabel):
         exit()
     
     
-    
+def normalize_unicode(text):
+    return unicodedata.normalize('NFC', str(text).strip()) 
 
 def parseNewTask (myInput):
     # fetching saved data and counts 
@@ -406,11 +415,16 @@ def parseNewTask (myInput):
     taskProjectName = ''
     
     ## PROJECTS
-    with open(MY_PROJECT_COUNTS,'r') as myFile:
+    with open(MY_PROJECT_COUNTS,'r', encoding='utf-8') as myFile:
+
          project_counts = json.load(myFile)
-    myProjectListAll = list (project_counts)
-    myProjectListAll = ['#' + s for s in myProjectListAll]
-    
+    # myProjectListAll = list (project_counts)
+    # myProjectListAll = ['#' + s for s in myProjectListAll]
+   # Normalize all project names (handles Umlauts like ä, ö, ü)
+    myProjectListAll = [
+        '#' + unicodedata.normalize('NFC', str(project_name)) 
+        for project_name in project_counts
+    ] 
 
     # log (f"mySections all: {mySections}")
     # log (f"myProjects all: {myProjects}")
@@ -428,6 +442,7 @@ def parseNewTask (myInput):
     
     for myInputItem in myInputElements:
         #log (f" input item: {myInputItem}")
+        myInputItem = normalize_unicode(myInputItem)
         
         if myInputItem.startswith('@'): #user trying to add a label
             if myInputItem.startswith("@(") and myInputItem.endswith(")") and " " in myInputItem: #there is a space and AlfreDO introduced parentheses 
