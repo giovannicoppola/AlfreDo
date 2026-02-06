@@ -86,20 +86,14 @@ type UserInfo struct {
 	WeeklyGoal int `json:"weekly_goal"`
 }
 
-// SyncResponse represents the full sync API response (used for cache rebuild)
-type SyncResponse struct {
-	Items    []Task    `json:"items"`
-	Projects []Project `json:"projects"`
-	Sections []Section `json:"sections"`
-	Labels   []Label   `json:"labels"`
+// SyncAllResponse represents the full sync API response
+type SyncAllResponse struct {
+	Items    []Task         `json:"items"`
+	Projects []Project      `json:"projects"`
+	Sections []Section      `json:"sections"`
+	Labels   []Label        `json:"labels"`
 	Stats    *StatsResponse `json:"stats"`
 	User     *UserInfo      `json:"user"`
-}
-
-// paginatedResponse is the generic wrapper for paginated API v1 responses
-type paginatedResponse struct {
-	Results    json.RawMessage `json:"results"`
-	NextCursor *string         `json:"next_cursor"`
 }
 
 // NewClient creates a new Todoist API client
@@ -111,151 +105,32 @@ func NewClient(token string) *Client {
 	}
 }
 
-// getPaginated fetches all pages from a paginated endpoint
-func (c *Client) getPaginated(endpoint string) ([]json.RawMessage, error) {
-	var allPages []json.RawMessage
-	cursor := ""
-
-	for {
-		url := c.baseURL + endpoint
-		if cursor != "" {
-			url += "?cursor=" + cursor
-		}
-
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return nil, err
-		}
-		req.Header.Set("Authorization", "Bearer "+c.token)
-
-		resp, err := c.httpClient.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			body, _ := io.ReadAll(resp.Body)
-			return nil, fmt.Errorf("%s: API request failed with status %d: %s", endpoint, resp.StatusCode, string(body))
-		}
-
-		var page paginatedResponse
-		if err := json.NewDecoder(resp.Body).Decode(&page); err != nil {
-			return nil, fmt.Errorf("%s: failed to decode response: %w", endpoint, err)
-		}
-
-		allPages = append(allPages, page.Results)
-
-		if page.NextCursor == nil || *page.NextCursor == "" {
-			break
-		}
-		cursor = *page.NextCursor
-	}
-
-	return allPages, nil
-}
-
-// GetTasks fetches all active tasks from the API v1
-func (c *Client) GetTasks() ([]Task, error) {
-	pages, err := c.getPaginated("/api/v1/tasks")
-	if err != nil {
-		return nil, err
-	}
-
-	var all []Task
-	for _, page := range pages {
-		var tasks []Task
-		if err := json.Unmarshal(page, &tasks); err != nil {
-			return nil, fmt.Errorf("tasks: failed to unmarshal: %w", err)
-		}
-		all = append(all, tasks...)
-	}
-	return all, nil
-}
-
-// GetProjects fetches all projects
-func (c *Client) GetProjects() ([]Project, error) {
-	pages, err := c.getPaginated("/api/v1/projects")
-	if err != nil {
-		return nil, err
-	}
-
-	var all []Project
-	for _, page := range pages {
-		var projects []Project
-		if err := json.Unmarshal(page, &projects); err != nil {
-			return nil, fmt.Errorf("projects: failed to unmarshal: %w", err)
-		}
-		all = append(all, projects...)
-	}
-	return all, nil
-}
-
-// GetSections fetches all sections
-func (c *Client) GetSections() ([]Section, error) {
-	pages, err := c.getPaginated("/api/v1/sections")
-	if err != nil {
-		return nil, err
-	}
-
-	var all []Section
-	for _, page := range pages {
-		var sections []Section
-		if err := json.Unmarshal(page, &sections); err != nil {
-			return nil, fmt.Errorf("sections: failed to unmarshal: %w", err)
-		}
-		all = append(all, sections...)
-	}
-	return all, nil
-}
-
-// GetLabels fetches all labels
-func (c *Client) GetLabels() ([]Label, error) {
-	pages, err := c.getPaginated("/api/v1/labels")
-	if err != nil {
-		return nil, err
-	}
-
-	var all []Label
-	for _, page := range pages {
-		var labels []Label
-		if err := json.Unmarshal(page, &labels); err != nil {
-			return nil, fmt.Errorf("labels: failed to unmarshal: %w", err)
-		}
-		all = append(all, labels...)
-	}
-	return all, nil
-}
-
-// GetStats fetches completion statistics and user info via the Sync API
-func (c *Client) GetStats() (*StatsResponse, *UserInfo, error) {
-	form := "sync_token=*&resource_types=" + `["user","stats"]`
+// SyncAll fetches all data in a single API call via the Sync endpoint
+func (c *Client) SyncAll() (*SyncAllResponse, error) {
+	form := `sync_token=*&resource_types=["all"]`
 	req, err := http.NewRequest("POST", c.baseURL+"/api/v1/sync", strings.NewReader(form))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	req.Header.Set("Authorization", "Bearer "+c.token)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, nil, fmt.Errorf("/api/v1/sync (stats): API request failed with status %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("sync failed with status %d: %s", resp.StatusCode, string(body))
 	}
 
-	var syncResp struct {
-		Stats *StatsResponse `json:"stats"`
-		User  *UserInfo      `json:"user"`
-	}
+	var syncResp SyncAllResponse
 	if err := json.NewDecoder(resp.Body).Decode(&syncResp); err != nil {
-		return nil, nil, err
+		return nil, fmt.Errorf("failed to decode sync response: %w", err)
 	}
-	return syncResp.Stats, syncResp.User, nil
+	return &syncResp, nil
 }
 
 // CompleteTask marks a task as completed
@@ -279,21 +154,7 @@ func (c *Client) CompleteTask(taskID string) error {
 	return nil
 }
 
-// BuildDueObject converts a date string (YYYY-MM-DD or YYYY-MM-DDTHH:MM) into
-// the API v1 due object format: {"date": "...", "time": "..."}
-func BuildDueObject(dateStr string) map[string]string {
-	due := map[string]string{}
-	if strings.Contains(dateStr, "T") {
-		parts := strings.SplitN(dateStr, "T", 2)
-		due["date"] = parts[0]
-		due["time"] = parts[1]
-	} else {
-		due["date"] = dateStr
-	}
-	return due
-}
-
-// CreateTask creates a new task
+// CreateTask creates a new task via the REST API
 func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate string, priority int) error {
 	payload := map[string]any{
 		"content":  content,
@@ -382,7 +243,7 @@ func (c *Client) UpdateTask(taskID string, updates map[string]any) error {
 	return nil
 }
 
-// CreateLabel creates a new label
+// CreateLabel creates a new label via the REST API
 func (c *Client) CreateLabel(name string) error {
 	payload := map[string]string{"name": name}
 	body, err := json.Marshal(payload)

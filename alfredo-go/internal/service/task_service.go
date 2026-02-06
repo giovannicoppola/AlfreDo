@@ -593,10 +593,13 @@ func (s *TaskService) ForceRebuild() (*alfred.Output, error) {
 	}, nil
 }
 
-// GetStats returns completion statistics
+// GetStats returns completion statistics from the cache
 func (s *TaskService) GetStats() (*todoist.StatsResponse, error) {
-	stats, _, err := s.client.GetStats()
-	return stats, err
+	if err := s.cache.EnsureFresh(); err != nil {
+		return nil, err
+	}
+	data := s.cache.Data()
+	return data.Stats, nil
 }
 
 // --- helpers ---

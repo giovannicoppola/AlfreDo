@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 )
 
@@ -62,116 +61,27 @@ func (c *Cache) NeedsRefresh() bool {
 	return elapsed.Hours() >= float64(c.cfg.RefreshRate*24)
 }
 
-// Refresh fetches all data from the API in parallel and saves to disk
+// Refresh fetches all data from the API in a single sync call and saves to disk
 func (c *Cache) Refresh() error {
 	utils.Log("refreshing cache...")
 
-	var (
-		tasks    []todoist.Task
-		projects []todoist.Project
-		sections []todoist.Section
-		labels   []todoist.Label
-		stats    *todoist.StatsResponse
-		user     *todoist.UserInfo
-		wg       sync.WaitGroup
-		mu       sync.Mutex
-		errs     []error
-	)
-
-	collect := func(fn func() error) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			if err := fn(); err != nil {
-				mu.Lock()
-				errs = append(errs, err)
-				mu.Unlock()
-			}
-		}()
-	}
-
-	collect(func() error {
-		t, err := c.client.GetTasks()
-		if err != nil {
-			return err
-		}
-		mu.Lock()
-		tasks = t
-		mu.Unlock()
-		return nil
-	})
-
-	collect(func() error {
-		p, err := c.client.GetProjects()
-		if err != nil {
-			return err
-		}
-		mu.Lock()
-		projects = p
-		mu.Unlock()
-		return nil
-	})
-
-	collect(func() error {
-		s, err := c.client.GetSections()
-		if err != nil {
-			return err
-		}
-		mu.Lock()
-		sections = s
-		mu.Unlock()
-		return nil
-	})
-
-	collect(func() error {
-		l, err := c.client.GetLabels()
-		if err != nil {
-			return err
-		}
-		mu.Lock()
-		labels = l
-		mu.Unlock()
-		return nil
-	})
-
-	// Stats fetch is non-fatal — if it fails, we still have tasks/projects/labels
-	collect(func() error {
-		st, u, err := c.client.GetStats()
-		if err != nil {
-			utils.Log("Warning: could not fetch stats: %s", err.Error())
-			return nil
-		}
-		mu.Lock()
-		stats = st
-		user = u
-		mu.Unlock()
-		return nil
-	})
-
-	wg.Wait()
-
-	if len(errs) > 0 {
-		return errs[0]
+	syncResp, err := c.client.SyncAll()
+	if err != nil {
+		return err
 	}
 
 	c.data = &CachedData{
-		Tasks:     tasks,
-		Projects:  projects,
-		Sections:  sections,
-		Labels:    labels,
-		Stats:     stats,
-		User:      &todoist.UserInfo{},
+		Tasks:     syncResp.Items,
+		Projects:  syncResp.Projects,
+		Sections:  syncResp.Sections,
+		Labels:    syncResp.Labels,
+		Stats:     syncResp.Stats,
+		User:      syncResp.User,
 		FetchedAt: time.Now(),
 	}
 
-	// Use user info from sync response if available
-	if user != nil {
-		c.data.User = user
-	} else if stats != nil {
-		c.data.User = &todoist.UserInfo{
-			DailyGoal:  stats.Goals.DailyGoal,
-			WeeklyGoal: stats.Goals.WeeklyGoal,
-		}
+	if c.data.User == nil {
+		c.data.User = &todoist.UserInfo{}
 	}
 
 	if err := c.save(); err != nil {
@@ -179,12 +89,12 @@ func (c *Cache) Refresh() error {
 	}
 
 	// Save label and project counts
-	labelCounts := ComputeLabelCounts(tasks, labels)
+	labelCounts := ComputeLabelCounts(c.data.Tasks, c.data.Labels)
 	if err := saveJSON(c.labelCountsPath(), labelCounts); err != nil {
 		utils.Log("warning: failed to save label counts: %v", err)
 	}
 
-	projectCounts := ComputeProjectCounts(tasks, projects, sections)
+	projectCounts := ComputeProjectCounts(c.data.Tasks, c.data.Projects, c.data.Sections)
 	if err := saveJSON(c.projectCountsPath(), projectCounts); err != nil {
 		utils.Log("warning: failed to save project counts: %v", err)
 	}
