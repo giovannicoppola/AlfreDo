@@ -1,0 +1,48 @@
+package cmd
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+)
+
+var parseCmd = &cobra.Command{
+	Use:   "parse [input]",
+	Short: "Parse new task input with autocomplete",
+	Long:  `Parse user input for new task creation, providing label/project autocomplete and task preview.`,
+	Args:               cobra.ExactArgs(1),
+	DisableFlagParsing: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		input := args[0]
+
+		// Check if we need to create a label first
+		mySource := os.Getenv("mySource")
+		if mySource == "createLabel" {
+			myNewLabel := os.Getenv("myNewLabel")
+			if myNewLabel != "" {
+				if err := taskService.CreateLabel(myNewLabel); err != nil {
+					fmt.Fprintf(os.Stderr, "Error creating label: %v\n", err)
+				}
+			}
+		}
+
+		output, err := taskService.ParseNewTask(input)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error parsing input: %v\n", err)
+			os.Exit(1)
+		}
+
+		jsonOutput, err := output.Marshal()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error marshaling JSON: %v\n", err)
+			os.Exit(1)
+		}
+
+		fmt.Println(string(jsonOutput))
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(parseCmd)
+}

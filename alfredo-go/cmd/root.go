@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"alfredo-go/internal/service"
+	"alfredo-go/pkg/cache"
 	"alfredo-go/pkg/config"
 	"alfredo-go/pkg/todoist"
 
@@ -11,6 +12,7 @@ import (
 var (
 	cfg           *config.Config
 	todoistClient *todoist.Client
+	dataCache     *cache.Cache
 	taskService   *service.TaskService
 )
 
@@ -35,5 +37,6 @@ func init() {
 func initConfig() {
 	cfg = config.LoadConfig()
 	todoistClient = todoist.NewClient(cfg.GetToken())
-	taskService = service.NewTaskService(todoistClient)
+	dataCache = cache.NewCache(todoistClient, cfg)
+	taskService = service.NewTaskService(todoistClient, dataCache, cfg)
 }

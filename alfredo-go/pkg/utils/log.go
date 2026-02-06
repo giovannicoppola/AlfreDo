@@ -10,6 +10,6 @@ func Log(format string, args ...interface{}) {
 	if len(args) > 0 {
 		fmt.Fprintf(os.Stderr, format+"\n", args...)
 	} else {
-		fmt.Fprintf(os.Stderr, format+"\n")
+		fmt.Fprintln(os.Stderr, format)
 	}
 }

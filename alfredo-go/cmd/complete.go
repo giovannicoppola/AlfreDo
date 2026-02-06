@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// completeCmd represents the complete command
 var completeCmd = &cobra.Command{
 	Use:   "complete [task-id]",
 	Short: "Mark a task as completed",
@@ -24,10 +23,11 @@ var completeCmd = &cobra.Command{
 		err := taskService.CompleteTask(taskID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error completing task: %v\n", err)
+			fmt.Println("❌ server error\ncheck debugger")
 			os.Exit(1)
 		}
 
-		fmt.Printf("Task %s completed successfully\n", taskID)
+		fmt.Println("🎯 task completed!\nWell done 💪")
 	},
 }
 

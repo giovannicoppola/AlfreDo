@@ -1,8 +1,19 @@
-.PHONY: build clean test run install deps
+.PHONY: build clean test run install deps build-universal build-workflow
 
 # Build the application
 build:
 	go build -o alfredo-go main.go
+
+# Build universal macOS binary (amd64 + arm64)
+build-universal:
+	GOOS=darwin GOARCH=amd64 go build -o alfredo-go-amd64 main.go
+	GOOS=darwin GOARCH=arm64 go build -o alfredo-go-arm64 main.go
+	lipo -create -output alfredo-go alfredo-go-amd64 alfredo-go-arm64
+	rm -f alfredo-go-amd64 alfredo-go-arm64
+
+# Build and copy binary into the Alfred workflow directory
+build-workflow: build-universal
+	cp alfredo-go ../source-alfredo-go/alfredo-go
 
 # Build for different platforms
 build-all:
@@ -43,13 +54,15 @@ lint:
 # Show help
 help:
 	@echo "Available targets:"
-	@echo "  build     - Build the application"
-	@echo "  build-all - Build for multiple platforms"
-	@echo "  deps      - Install dependencies"
-	@echo "  test      - Run tests"
-	@echo "  run       - Run the application"
-	@echo "  clean     - Clean build artifacts"
-	@echo "  install   - Install to /usr/local/bin"
-	@echo "  fmt       - Format code"
-	@echo "  lint      - Lint code"
-	@echo "  help      - Show this help"
+	@echo "  build           - Build the application"
+	@echo "  build-universal - Build universal macOS binary (amd64+arm64)"
+	@echo "  build-workflow  - Build and copy binary into Alfred workflow"
+	@echo "  build-all       - Build for multiple platforms"
+	@echo "  deps            - Install dependencies"
+	@echo "  test            - Run tests"
+	@echo "  run             - Run the application"
+	@echo "  clean           - Clean build artifacts"
+	@echo "  install         - Install to /usr/local/bin"
+	@echo "  fmt             - Format code"
+	@echo "  lint            - Lint code"
+	@echo "  help            - Show this help"
