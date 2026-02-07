@@ -67,11 +67,12 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, or 3) all tasks
 ![](images/demo.png)
 - Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project/section. 
-- Once a task is selected, you can do one of three things: 
-	- `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
-	- `shift-enter` ⇧↩️ will complete the task
-	- `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
-	- Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
+- Once a task is selected, you can do one of four things:
+	1. `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
+	2. `shift-enter` ⇧↩️ will complete the task
+	3. `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
+	    - Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
+	4. `alt-enter` ⌥↩️ will open the task for editing, with all current attributes pre-populated
 ![](images/reschedule.png)
 	
 
@@ -123,9 +124,13 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - Deadline info is displayed in task subtitles across all query modes
 
 ### Natural language dates 🗓️
-- Due dates and deadlines now support natural language expressions (e.g., `due:tomorrow`, `due:next monday`, `{in 3 weeks}`)
-- Multi-language support via the `DUE_LANG` configuration option (e.g., `en`, `de`, `es`, `fr`, `it`)
+- Due dates and deadlines support natural language expressions: `due:tomorrow`, `due:next monday`, `{in 3 weeks}`
+- Inline date detection: simply type `buy milk tomorrow` or `meeting next friday at 3pm` — dates are recognized automatically from the task content
+- **Multi-language support**: dates are resolved locally based on your system language (`LANG` environment variable). Supported languages: Danish, Dutch, English, Finnish, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Chinese
+- Examples: `due:domani` (Italian), `due:morgen` (German), `{demain}` (French), `nachsten freitag` (German, "next Friday")
+- Multi-word expressions with "next" prefixes are supported (e.g., `prossimo venerdì`, `nächsten Freitag`, `próximo lunes`)
 - Rescheduling also supports natural language input
+- All dates are resolved locally to `YYYY-MM-DD` format before being sent to the Todoist API
 
 ### No more Python dependency 🐍➡️🐹
 - AlfreDo now runs as a compiled Go binary — no need for Python3
