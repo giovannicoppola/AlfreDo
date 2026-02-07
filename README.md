@@ -16,6 +16,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - [Setting up](#setting-up)
 - [Basic Usage](#usage)
 - [Known Issues](#known-issues)
+- [New features in version 0.5](#new-features-v05)
 - [Acknowledgments](#acknowledgments)
 - [Changelog](#changelog)
 - [Feedback](#feedback)
@@ -106,6 +107,30 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - Thanks to Werner Dijkerman for help with troubleshooting. 
 	
 	
+<h1 id="new-features-v05">New features in version 0.5 🆕</h1>
+
+Version 0.5 is a complete rewrite in Go, bringing several new features:
+
+### Edit tasks ✏️
+- Select a task from any query view, then press `alt-enter` ⌥↩️ to edit it
+- The current task content, labels, project, priority, due date, and deadline are pre-populated in the input field
+- Modify any attribute using the same syntax as task creation, then `shift-enter` ⇧↩️ to save
+
+### Deadlines 🎯
+- Set a deadline when creating or editing a task using curly braces: `{YYYY-MM-DD}`, or relative expressions like `{7d}`, `{3w}`, `{2m}`
+- Natural language deadlines are also supported: `{next friday}`, `{tomorrow}`
+- New **deadline query mode** to view only tasks with deadlines, sorted by closest deadline
+- Deadline info is displayed in task subtitles across all query modes
+
+### Natural language dates 🗓️
+- Due dates and deadlines now support natural language expressions (e.g., `due:tomorrow`, `due:next monday`, `{in 3 weeks}`)
+- Multi-language support via the `DUE_LANG` configuration option (e.g., `en`, `de`, `es`, `fr`, `it`)
+- Rescheduling also supports natural language input
+
+### No more Python dependency 🐍➡️🐹
+- AlfreDo now runs as a compiled Go binary — no need for Python3
+
+
 <h1 id="changelog">Changelog 🧰</h1>
 
 - 05-20-2024: version 0.4.1 bug fix
