@@ -36,7 +36,6 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 ### Needed
 - Alfred 5 with Powerpack license
 - A [Todoist](https://todoist.com/) account
-- Python3 (howto [here](https://www.freecodecamp.org/news/python-version-on-mac-update/))
 - Download `AlfreDo` [latest release](https://github.com/giovannicoppola/alfredo/releases/latest)
 
 
@@ -65,7 +64,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 <h1 id="usage">Basic Usage 📖</h1>
 
 ## Searching your tasks 🔍
-- launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, or 3) all tasks
+- launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, 3) all tasks, or 4) tasks with a deadline.
 ![](images/demo.png)
 - Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project/section. 
 - Once a task is selected, you can do one of four things:
@@ -82,8 +81,8 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - Use: 
     - `@` to enter one or more labels (new ones can be created on the fly)
     - `#` to enter a project/section (`Inbox` will be used if none entered)
-    - `due:` to enter a due date
-    - `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). Finally, you can use [natural language dates](#natural-language-dates).
+    - `p[1-4]` to enter a priority.
+    - `due:` to enter a due date, As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). Finally, you can use [natural language dates](#natural-language-dates).
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 ![](images/universalAction.png)
 
@@ -129,7 +128,7 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - New **deadline query mode** to view only tasks with deadlines, sorted by closest deadline
 - Deadline info is displayed in task subtitles across all query modes
 
-### Natural language dates 🗓️
+<h3 id="natural-language-dates">Natural language dates 🗓️</h3>
 - Due dates and deadlines support natural language expressions: `due:tomorrow`, `due:next monday`, `{in 3 weeks}`
 - Inline date detection: simply type `buy milk tomorrow` or `meeting next friday at 3pm` — dates are recognized automatically from the task content
 - **Multi-language support**: dates are resolved locally based on your system language (`LANG` environment variable). Supported languages: Danish, Dutch, English, Finnish, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Chinese
@@ -144,6 +143,7 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 
 <h1 id="changelog">Changelog 🧰</h1>
 
+- 02-07-2026: version 0.5 complete rewrite in Go, new features (edit tasks, deadlines, natural language dates), and bug fixes
 - 05-20-2024: version 0.4.1 bug fix
 - 02-13-2024: version 0.4 new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md#version-04-feb-2024))
 - 11-10-2023: version 0.3 support for app, bug fixes
