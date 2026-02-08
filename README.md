@@ -70,19 +70,19 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - Once a task is selected, you can do one of four things:
 	1. `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
 	2. `shift-enter` ⇧↩️ will complete the task
-	3. `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks)
-	    - Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
-	4. `alt-enter` ⌥↩️ will open the task for editing, with all current attributes pre-populated
+	3. `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the preset options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) or without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). [Natural language dates](#natural-language-dates) are also supported (e.g. `tomorrow`, `next friday`).
+	4. `alt-enter` ⌥↩️ will open the task for editing. The current task content, labels, project, priority, due date, and deadline are pre-populated in the input field. Modify any attribute using the same syntax as task creation, then press `shift-enter` ⇧↩️ to save.
 ![](images/reschedule.png)
 	
 
 ## Creating new tasks ⭐
 - launch with keyword (default: `!!!`) or hotkey. 
-- Use: 
+- Use:
     - `@` to enter one or more labels (new ones can be created on the fly)
     - `#` to enter a project/section (`Inbox` will be used if none entered)
-    - `p[1-4]` to enter a priority.
-    - `due:` to enter a due date, As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). Finally, you can use [natural language dates](#natural-language-dates).
+    - `p[1-4]` to enter a priority
+    - `due:` to enter a due date. Choose one of the preset options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) or without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). [Natural language dates](#natural-language-dates) are also supported (e.g. `due:tomorrow`, `due:next friday`)
+    - `{deadline}` to set a deadline using curly braces: `{YYYY-MM-DD}`, or relative expressions like `{7d}`, `{3w}`, `{2m}`. Natural language deadlines are also supported: `{next friday}`, `{tomorrow}`
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 ![](images/universalAction.png)
 
@@ -129,6 +129,7 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - Deadline info is displayed in task subtitles across all query modes
 
 <h3 id="natural-language-dates">Natural language dates 🗓️</h3>
+
 - Due dates and deadlines support natural language expressions: `due:tomorrow`, `due:next monday`, `{in 3 weeks}`
 - Inline date detection: simply type `buy milk tomorrow` or `meeting next friday at 3pm` — dates are recognized automatically from the task content
 - **Multi-language support**: dates are resolved locally based on your system language (`LANG` environment variable). Supported languages: Danish, Dutch, English, Finnish, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Chinese
