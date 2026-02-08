@@ -83,9 +83,14 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
     - `p[1-4]` to enter a priority
     - `due:` to enter a due date. Choose one of the preset options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) or without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). [Natural language dates](#natural-language-dates) are also supported (e.g. `due:tomorrow`, `due:next friday`)
     - `{deadline}` to set a deadline using curly braces: `{YYYY-MM-DD}`, or relative expressions like `{7d}`, `{3w}`, `{2m}`. Natural language deadlines are also supported: `{next friday}`, `{tomorrow}`
-- Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
+- Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`.
 ![](images/universalAction.png)
 
+
+## Editing tasks ✏️
+- Select a task from any query view, then press `alt-enter` ⌥↩️ to edit it
+- The current task content, labels, project, priority, due date, and deadline are pre-populated in the input field
+- Modify any attribute using the same syntax as task creation (`@label`, `#Project`, `p1`–`p4`, `due:`, `{deadline}`), then press `shift-enter` ⇧↩️ to save
 
 
 ## Database refresh 🔄
