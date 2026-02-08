@@ -49,7 +49,8 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 		1. Tasks due today (default: `!1`)
 		2. Overdue (default: `!2`)
 		3. All tasks (default: `!3`)
-		4. New task (default: `!!!`)
+        4. Tasks with a deadline (default: `!4`)
+		5. New task (default: `!!!`)
 	- set the keyword (or hotkey) to force-refresh (default: `todoist::refresh`)
 	- set the keyword (or hotkey) to create a new task (default: `!!!`)
 	- set refresh rate (in days). Default: `1`
@@ -77,7 +78,12 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 	
 
 ## Creating new tasks ⭐
-- launch with keyword (default: `!!!`) or hotkey. Use `@` to enter one or more labels (new ones can be created here), `#` to enter a project/section (`Inbox` will be used if none entered), `due:` to enter a due date, `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`).
+- launch with keyword (default: `!!!`) or hotkey. 
+- Use: 
+    - `@` to enter one or more labels (new ones can be created on the fly)
+    - `#` to enter a project/section (`Inbox` will be used if none entered)
+    - `due:` to enter a due date
+    - `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). Finally, you can use [natural language dates](#natural-language-dates).
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 ![](images/universalAction.png)
 
