@@ -13,7 +13,7 @@ build-universal:
 
 # Build and copy binary into the Alfred workflow directory
 build-workflow: build-universal
-	cp alfredo-go ../source-alfredo-go/alfredo-go
+	cp alfredo-go ../source/alfredo-go
 
 # Build for different platforms
 build-all:

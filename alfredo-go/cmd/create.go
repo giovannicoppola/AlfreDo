@@ -20,6 +20,9 @@ var createCmd = &cobra.Command{
 		taskProjectID := os.Getenv("myProjectID")
 		taskSectionID := os.Getenv("mySectionID")
 		myDueDate := os.Getenv("myDueDate")
+		myDueString := os.Getenv("myDueString")
+		myDueLang := os.Getenv("myDueLang")
+		myDeadline := os.Getenv("myDeadline")
 		myPriorityStr := os.Getenv("myPriority")
 
 		priority := 1
@@ -33,7 +36,21 @@ var createCmd = &cobra.Command{
 			taskText = args[0]
 		}
 
-		err := taskService.CreateTask(taskText, taskLabels, taskProjectID, taskSectionID, myDueDate, priority)
+		// If we have a natural language due string, prefer it over coded date
+		if myDueString != "" {
+			myDueDate = ""
+		}
+
+		// Determine deadline lang from config
+		deadlineLang := ""
+		if myDeadline != "" {
+			deadlineLang = cfg.DueLang
+			if deadlineLang == "" {
+				deadlineLang = "en"
+			}
+		}
+
+		err := taskService.CreateTask(taskText, taskLabels, taskProjectID, taskSectionID, myDueDate, myDueString, myDueLang, priority, myDeadline, deadlineLang)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error creating task: %v\n", err)
 			fmt.Println("❌ server error\ncheck debugger")

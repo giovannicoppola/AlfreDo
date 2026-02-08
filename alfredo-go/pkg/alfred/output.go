@@ -19,8 +19,9 @@ type OutputItem struct {
 
 // ModsItem represents modifier keys in Alfred workflow
 type ModsItem struct {
-	Arg      string `json:"arg"`
-	Subtitle string `json:"subtitle"`
+	Arg       string         `json:"arg"`
+	Subtitle  string         `json:"subtitle"`
+	Variables map[string]any `json:"variables,omitempty"`
 }
 
 // Icon represents an Alfred item icon

@@ -19,19 +19,26 @@ type Client struct {
 
 // Task represents a Todoist task
 type Task struct {
-	ID          string   `json:"id"`
-	Content     string   `json:"content"`
-	Due         *Due     `json:"due"`
-	Labels      []string `json:"labels"`
-	Priority    int      `json:"priority"`
-	ProjectID   string   `json:"project_id"`
-	SectionID   string   `json:"section_id"`
-	IsRecurring bool     `json:"is_recurring"`
+	ID          string    `json:"id"`
+	Content     string    `json:"content"`
+	Due         *Due      `json:"due"`
+	Deadline    *Deadline `json:"deadline"`
+	Labels      []string  `json:"labels"`
+	Priority    int       `json:"priority"`
+	ProjectID   string    `json:"project_id"`
+	SectionID   string    `json:"section_id"`
+	IsRecurring bool      `json:"is_recurring"`
 }
 
 // Due represents a task's due date
 type Due struct {
 	Date string `json:"date"`
+}
+
+// Deadline represents a task's deadline
+type Deadline struct {
+	Date string `json:"date"`
+	Lang string `json:"lang,omitempty"`
 }
 
 // Project represents a Todoist project
@@ -155,10 +162,13 @@ func (c *Client) CompleteTask(taskID string) error {
 }
 
 // CreateTask creates a new task via the REST API
-func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate string, priority int) error {
+func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline *Deadline, description string) error {
 	payload := map[string]any{
 		"content":  content,
 		"priority": priority,
+	}
+	if description != "" {
+		payload["description"] = description
 	}
 	if len(labels) > 0 {
 		payload["labels"] = labels
@@ -169,11 +179,23 @@ func (c *Client) CreateTask(content string, labels []string, projectID, sectionI
 	if sectionID != "" {
 		payload["section_id"] = sectionID
 	}
-	if dueDate != "" {
+	if dueString != "" {
+		// Use Todoist's NLP: send due_string + due_lang
+		payload["due_string"] = dueString
+		if dueLang != "" {
+			payload["due_lang"] = dueLang
+		}
+	} else if dueDate != "" {
 		if strings.Contains(dueDate, "T") {
 			payload["due_datetime"] = dueDate + ":00"
 		} else {
 			payload["due_date"] = dueDate
+		}
+	}
+	if deadline != nil {
+		payload["deadline"] = map[string]string{
+			"date": deadline.Date,
+			"lang": deadline.Lang,
 		}
 	}
 

@@ -83,6 +83,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
     - `p[1-4]` to enter a priority
     - `due:` to enter a due date. Choose one of the preset options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) or without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). [Natural language dates](#natural-language-dates) are also supported (e.g. `due:tomorrow`, `due:next friday`)
     - `{deadline}` to set a deadline using curly braces: `{YYYY-MM-DD}`, or relative expressions like `{7d}`, `{3w}`, `{2m}`. Natural language deadlines are also supported: `{next friday}`, `{tomorrow}`
+- **Task Stamp**: optionally add a description to every new task. Set the `TASK_STAMP` variable in the Workflow Configuration to a template string. Use `{timestamp}` as a placeholder for the current date and time (e.g. `Created {timestamp}` → `Created Sunday, February 8, 2026, 12:40:23 pm`). Leave empty to skip.
 - Universal Action: new tasks can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`.
 ![](images/universalAction.png)
 
@@ -143,17 +144,21 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - Rescheduling also supports natural language input
 - All dates are resolved locally to `YYYY-MM-DD` format before being sent to the Todoist API
 
+### Task Stamp 📝
+- Automatically add a description to every new task by setting `TASK_STAMP` in the Workflow Configuration
+- Supports a `{timestamp}` placeholder that gets replaced with the current date and time (e.g. `Created {timestamp}` → `Created Sunday, February 8, 2026, 12:40:23 pm`)
+
 ### No more Python dependency 🐍➡️🐹
 - AlfreDo now runs as a compiled Go binary — no need for Python3
 
 
 <h1 id="changelog">Changelog 🧰</h1>
 
-- 02-07-2026: version 0.5 complete rewrite in Go, new features (edit tasks, deadlines, natural language dates), and bug fixes
-- 05-20-2024: version 0.4.1 bug fix
-- 02-13-2024: version 0.4 new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md#version-04-feb-2024))
-- 11-10-2023: version 0.3 support for app, bug fixes
-- 06-10-2023: version 0.2.2 support for sections, international date, time, supporting spaces in project names
+- 02-07-2026: version 0.5 -- complete rewrite in Go, new features (edit tasks, deadlines, natural language dates), and bug fixes
+- 05-20-2024: version 0.4.1 -- bug fix
+- 02-13-2024: version 0.4 -- new features and bug fixes (listed [here](https://github.com/giovannicoppola/AlfreDo/blob/main/changelog.md#version-04-feb-2024))
+- 11-10-2023: version 0.3 -- support for app, bug fixes
+- 06-10-2023: version 0.2.2 -- support for sections, international date, time, supporting spaces in project names
 - 05-03-2023: version 0.1
 
 

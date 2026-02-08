@@ -3,12 +3,15 @@ package parser
 import (
 	"alfredo-go/pkg/utils"
 	"regexp"
+	"strconv"
 	"strings"
+	"unicode"
 
 	"golang.org/x/text/unicode/norm"
 )
 
 var inputPattern = regexp.MustCompile(`\s*([@#]\([^)]+\)|\S+)\s*`)
+var deadlinePattern = regexp.MustCompile(`\{([^}]+)\}`)
 
 // ParseInput tokenizes user input, keeping together elements with spaces if they are
 // in parentheses and preceded by # or @
@@ -23,37 +26,63 @@ func ParseInput(input string) []string {
 
 // ParsedTask holds the result of parsing a new-task input string
 type ParsedTask struct {
-	Content     string
-	Labels      []string
-	ProjectName string // includes # prefix
-	ProjectID   string
-	SectionName string
-	SectionID   string
-	DueDate     string
-	Priority    int // Todoist API priority (4=highest, 1=lowest)
-	PrioString  string
-	RawInput    string
+	Content      string
+	Labels       []string
+	ProjectName  string // includes # prefix
+	ProjectID    string
+	SectionName  string
+	SectionID    string
+	DueDate      string
+	DueString    string // raw natural language text (e.g., "tomorrow")
+	DueLang      string // language for Todoist NLP (e.g., "en")
+	Deadline     string // resolved deadline date (YYYY-MM-DD)
+	DeadlineRaw  string // raw deadline text for NLP (e.g., "friday")
+	Priority     int    // Todoist API priority (4=highest, 1=lowest)
+	PrioString   string
+	RawInput     string
 }
 
 // InputContext holds contextual data needed during parsing
 type InputContext struct {
-	AllLabels    []string          // prefixed with @
-	AllProjects  []string          // prefixed with #
-	LabelCounts  map[string]int    // label name (no prefix) -> count
-	ProjectCounts map[string]int   // project name (no prefix) -> count
-	PartialMatch bool
+	AllLabels     []string        // prefixed with @
+	AllProjects   []string        // prefixed with #
+	LabelCounts   map[string]int  // label name (no prefix) -> count
+	ProjectCounts map[string]int  // project name (no prefix) -> count
+	PartialMatch  bool
+	Lang          string          // system language code (e.g., "it", "de", "en")
 }
 
 // ParseNewTaskInput parses raw input for new task creation.
 // Returns (parsedTask, autocompleteItems, needsExit).
 // If autocompleteItems is non-nil, caller should display them and exit.
 func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []AutocompleteItem, bool) {
-	elements := ParseInput(input)
+	lang := ctx.Lang
+
+	// Extract {deadline} before tokenizing
+	var deadlineRaw string
+	cleanedInput := input
+	if m := deadlinePattern.FindStringSubmatch(input); m != nil {
+		deadlineRaw = strings.TrimSpace(m[1])
+		cleanedInput = deadlinePattern.ReplaceAllString(input, "")
+		cleanedInput = strings.TrimSpace(cleanedInput)
+		// collapse double spaces
+		for strings.Contains(cleanedInput, "  ") {
+			cleanedInput = strings.ReplaceAll(cleanedInput, "  ", " ")
+		}
+	}
+
+	elements := ParseInput(cleanedInput)
 	utils.Log("input elements: %v", elements)
 
 	parsed := &ParsedTask{
 		Priority: 1,
 		RawInput: input,
+	}
+
+	// Resolve deadline
+	if deadlineRaw != "" {
+		parsed.DeadlineRaw = deadlineRaw
+		parsed.Deadline = resolveDeadline(deadlineRaw, lang)
 	}
 
 	var taskElements []string
@@ -171,11 +200,33 @@ func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []Autocomp
 
 		} else if strings.HasPrefix(item, "due:") {
 			dueStr := item[4:]
-			resolved, menuItems, needsMenu := ParseDueString(dueStr, input)
+			// Try single-token resolution first (coded formats + NLP with locale)
+			resolved, menuItems, needsMenu := ParseDueString(dueStr, cleanedInput, lang)
 			if needsMenu {
-				return nil, menuItems, true
+				// Before showing menu, try consuming following tokens for multi-word NLP
+				// e.g., "due:next friday" is tokenized as "due:next" + "friday"
+				combined := dueStr
+				consumed := 0
+				for j := i + 1; j < len(elements); j++ {
+					candidate := combined + " " + elements[j]
+					if t, ok := ParseNaturalDate(candidate, lang); ok {
+						combined = candidate
+						consumed = j - i
+						resolved = FormatResolvedDate(t)
+					} else {
+						break
+					}
+				}
+				if consumed > 0 {
+					// Skip consumed tokens
+					i += consumed
+					parsed.DueDate = resolved
+				} else {
+					return nil, menuItems, true
+				}
+			} else {
+				parsed.DueDate = resolved
 			}
-			parsed.DueDate = resolved
 
 		} else {
 			taskElements = append(taskElements, item)
@@ -183,6 +234,21 @@ func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []Autocomp
 	}
 
 	parsed.Content = strings.Join(taskElements, " ")
+
+	// Inline date detection: if no explicit due: was set, try NLP on the content
+	if parsed.DueDate == "" && parsed.Content != "" {
+		if nlp := ParseNaturalDateInText(parsed.Content, lang); nlp != nil {
+			parsed.DueDate = FormatResolvedDate(nlp.Time)
+			// Strip matched date text from content
+			cleaned := parsed.Content[:nlp.Start] + parsed.Content[nlp.End:]
+			cleaned = strings.TrimSpace(cleaned)
+			for strings.Contains(cleaned, "  ") {
+				cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+			}
+			parsed.Content = cleaned
+		}
+	}
+
 	return parsed, nil, false
 }
 
@@ -257,6 +323,42 @@ func removeElement(slice []string, elem string) []string {
 // NormalizeUnicode applies NFC normalization
 func NormalizeUnicode(text string) string {
 	return norm.NFC.String(strings.TrimSpace(text))
+}
+
+// resolveDeadline resolves a deadline string to YYYY-MM-DD.
+// Tries coded formats first (YYYY-MM-DD, Nd, Nw, Nm), then NLP with locale.
+func resolveDeadline(raw, lang string) string {
+	if absDatePattern.MatchString(raw) {
+		return raw
+	}
+	if m := relDaysPattern.FindStringSubmatch(raw); m != nil {
+		days, _ := strconv.Atoi(m[1])
+		return NewDate(days)
+	}
+	if m := relWeeksPattern.FindStringSubmatch(raw); m != nil {
+		weeks, _ := strconv.Atoi(m[1])
+		return NewDate(weeks * 7)
+	}
+	if m := relMonthsPattern.FindStringSubmatch(raw); m != nil {
+		months, _ := strconv.Atoi(m[1])
+		return NewDate(months * 30)
+	}
+	// Try NLP with locale
+	if t, ok := ParseNaturalDate(raw, lang); ok {
+		return t.Format("2006-01-02")
+	}
+	// Unrecognized — return empty so it's silently ignored
+	return ""
+}
+
+// containsLetter returns true if the string contains at least one Unicode letter.
+func containsLetter(s string) bool {
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			return true
+		}
+	}
+	return false
 }
 
 func itoa(n int) string {

@@ -8,7 +8,6 @@ import (
 	"alfredo-go/pkg/todoist"
 	"alfredo-go/pkg/utils"
 	"fmt"
-	"math"
 	"sort"
 	"strings"
 	"time"
@@ -37,14 +36,16 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 	}
 
 	data := s.cache.Data()
-	today := time.Now().Format("2006-01-02")
-	todayDate := time.Now()
+	now := time.Now()
+	today := now.Format("2006-01-02")
+	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 
 	// Build goals string
 	goalsString := ""
-	if s.cfg.ShowGoals && data.Stats != nil {
-		dailyGoal := data.Stats.Goals.DailyGoal
-		weeklyGoal := data.Stats.Goals.WeeklyGoal
+	if s.cfg.ShowGoals && data.Stats != nil && data.User != nil {
+		// Goals come from the user object, not stats
+		dailyGoal := data.User.DailyGoal
+		weeklyGoal := data.User.WeeklyGoal
 
 		var soFarCompleted int
 		for _, d := range data.Stats.DaysItems {
@@ -109,6 +110,17 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 			return di < dj
 		})
 		icon = "icons/bullet.png"
+
+	case "deadline":
+		for _, t := range data.Tasks {
+			if t.Deadline != nil && t.Deadline.Date != "" {
+				toShow = append(toShow, t)
+			}
+		}
+		sort.Slice(toShow, func(i, j int) bool {
+			return toShow[i].Deadline.Date < toShow[j].Deadline.Date
+		})
+		icon = "icons/deadline.png"
 	}
 
 	// Get counts from subset
@@ -292,7 +304,7 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 			if task.Due != nil {
 				dueDate := parseDueDate(task.Due.Date)
 				if !dueDate.IsZero() {
-					dueDays := int(math.Floor(todayDate.Sub(dueDate).Hours() / 24))
+					dueDays := int(todayDate.Sub(dueDate).Hours() / 24)
 					dayWord := "days"
 					if abs(dueDays) == 1 {
 						dayWord = "day"
@@ -307,6 +319,25 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 				}
 			}
 
+			deadlineString := ""
+			if task.Deadline != nil && task.Deadline.Date != "" {
+				dlDate := parseDueDate(task.Deadline.Date)
+				if !dlDate.IsZero() {
+					dlDays := int(todayDate.Sub(dlDate).Hours() / 24)
+					dayWord := "days"
+					if abs(dlDays) == 1 {
+						dayWord = "day"
+					}
+					if dlDays == 0 {
+						deadlineString = "🎯 DEADLINE TODAY"
+					} else if dlDays < 0 {
+						deadlineString = fmt.Sprintf("🎯 deadline in %d %s", abs(dlDays), dayWord)
+					} else {
+						deadlineString = fmt.Sprintf("🎯 %d %s past deadline❗", dlDays, dayWord)
+					}
+				}
+			}
+
 			labelsString := ""
 			if len(task.Labels) > 0 {
 				labelsString = "🏷️ " + strings.Join(task.Labels, ",")
@@ -314,8 +345,20 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 
 			projectName := getProjectName(data.Projects, task.ProjectID)
 
-			title := fmt.Sprintf("%s (#%s) %s", task.Content, projectName, dueString)
-			subtitle := fmt.Sprintf("%d/%d.%s%s", countR, matchCount, goalsString, labelsString)
+			dateInfo := dueString
+			if mode == "deadline" {
+				dateInfo = deadlineString
+			}
+
+			title := fmt.Sprintf("%s (#%s) %s", task.Content, projectName, dateInfo)
+			subtitleDeadline := ""
+			if mode != "deadline" && deadlineString != "" {
+				subtitleDeadline = " " + deadlineString
+			}
+			subtitle := fmt.Sprintf("%d/%d.%s%s%s", countR, matchCount, goalsString, labelsString, subtitleDeadline)
+
+			// Build reconstructed input string for edit mode
+			editArg := reconstructEditInput(task, data.Projects)
 
 			output.Items = append(output.Items, alfred.OutputItem{
 				Title:    title,
@@ -331,7 +374,13 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 					"myMode":        mode,
 				},
 				Mods: map[string]alfred.ModsItem{
-					"alt": {Arg: "", Subtitle: ""},
+					"alt": {
+						Arg:      editArg,
+						Subtitle: "Edit this task ✏️",
+						Variables: map[string]any{
+							"myTaskID": task.ID,
+						},
+					},
 				},
 				Icon: &alfred.Icon{Path: icon},
 			})
@@ -355,8 +404,17 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 			},
 		})
 	} else {
+		emptyTitle := "no tasks left to do today! 🙌"
+		switch mode {
+		case "due":
+			emptyTitle = "no overdue tasks! 🙌"
+		case "deadline":
+			emptyTitle = "no tasks with a deadline set"
+		case "all":
+			emptyTitle = "no tasks found"
+		}
 		output.Items = append(output.Items, alfred.OutputItem{
-			Title:    "no tasks left to do today! 🙌",
+			Title:    emptyTitle,
 			Subtitle: goalsString,
 			Arg:      "",
 			Mods: map[string]alfred.ModsItem{
@@ -404,6 +462,7 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 		LabelCounts:   labelCounts,
 		ProjectCounts: projectCounts,
 		PartialMatch:  s.cfg.PartialMatch,
+		Lang:          s.cfg.DueLang,
 	}
 
 	parsed, autocomplete, needsExit := parser.ParseNewTaskInput(input, ctx)
@@ -469,22 +528,31 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 		prioStringF = "p3️⃣"
 	}
 
+	var deadlineStringF string
+	if parsed.Deadline != "" {
+		deadlineStringF = "🎯 deadline:" + parsed.Deadline
+	}
+
 	projStringF := "📋" + parsed.ProjectName
 
-	subtitle := fmt.Sprintf("%s %s %s %s %s ⇧↩️ to create",
-		projStringF, sectStringF, tagStringF, prioStringF, dueStringF)
+	subtitle := fmt.Sprintf("%s %s %s %s %s %s ⇧↩️ to create",
+		projStringF, sectStringF, tagStringF, prioStringF, dueStringF, deadlineStringF)
 
 	output.Items = append(output.Items, alfred.OutputItem{
 		Title:    parsed.Content,
 		Subtitle: subtitle,
 		Arg:      input,
 		Variables: map[string]any{
-			"myTaskText":  parsed.Content,
-			"myTagString": tagString,
-			"myProjectID": parsed.ProjectID,
-			"mySectionID": parsed.SectionID,
-			"myDueDate":   parsed.DueDate,
-			"myPriority":  parsed.Priority,
+			"myTaskText":    parsed.Content,
+			"myTagString":   tagString,
+			"myProjectID":   parsed.ProjectID,
+			"mySectionID":   parsed.SectionID,
+			"myDueDate":     parsed.DueDate,
+			"myDueString":   parsed.DueString,
+			"myDueLang":     parsed.DueLang,
+			"myDeadline":    parsed.Deadline,
+			"myDeadlineRaw": parsed.DeadlineRaw,
+			"myPriority":    parsed.Priority,
 		},
 		Icon: &alfred.Icon{Path: "icons/newTask.png"},
 	})
@@ -505,13 +573,33 @@ func (s *TaskService) CompleteTask(taskID string) error {
 }
 
 // CreateTask creates a new task via the API
-func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate string, priority int) error {
+func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string) error {
 	var labels []string
 	if labelsStr != "" {
 		labels = strings.Split(labelsStr, ",,..,,")
 	}
 
-	if err := s.client.CreateTask(content, labels, projectID, sectionID, dueDate, priority); err != nil {
+	var dl *todoist.Deadline
+	if deadline != "" {
+		lang := deadlineLang
+		if lang == "" {
+			lang = s.cfg.DueLang
+		}
+		dl = &todoist.Deadline{Date: deadline, Lang: lang}
+	}
+
+	if dueLang == "" && dueString != "" {
+		dueLang = s.cfg.DueLang
+	}
+
+	// Build description from TASK_STAMP template
+	description := ""
+	if s.cfg.TaskStamp != "" {
+		description = strings.ReplaceAll(s.cfg.TaskStamp, "{timestamp}",
+			time.Now().Format("Monday, January 2, 2006, 3:04:05 pm"))
+	}
+
+	if err := s.client.CreateTask(content, labels, projectID, sectionID, dueDate, dueString, dueLang, priority, dl, description); err != nil {
 		return err
 	}
 
@@ -565,7 +653,7 @@ func (s *TaskService) RescheduleTask(taskID, dateInput string) error {
 
 // BuildRescheduleMenu builds the reschedule date menu
 func (s *TaskService) BuildRescheduleMenu(customDays, taskContent string) *alfred.Output {
-	items := parser.BuildRescheduleMenu(customDays, taskContent)
+	items := parser.BuildRescheduleMenu(customDays, taskContent, s.cfg.DueLang)
 	output := &alfred.Output{Items: make([]alfred.OutputItem, 0, len(items))}
 	for _, item := range items {
 		output.Items = append(output.Items, alfred.OutputItem{
@@ -602,7 +690,120 @@ func (s *TaskService) GetStats() (*todoist.StatsResponse, error) {
 	return data.Stats, nil
 }
 
+// EditTask updates an existing task via the API
+func (s *TaskService) EditTask(taskID, content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string) error {
+	var labels []string
+	if labelsStr != "" {
+		labels = strings.Split(labelsStr, ",,..,,")
+	}
+
+	updates := map[string]any{
+		"content":  content,
+		"labels":   labels,
+		"priority": priority,
+	}
+
+	if projectID != "" {
+		updates["project_id"] = projectID
+	}
+	if sectionID != "" {
+		updates["section_id"] = sectionID
+	}
+
+	if dueString != "" {
+		if dueLang == "" {
+			dueLang = s.cfg.DueLang
+		}
+		updates["due"] = map[string]any{
+			"string": dueString,
+			"lang":   dueLang,
+		}
+	} else if dueDate != "" {
+		updates["due"] = map[string]string{"date": dueDate}
+	} else {
+		updates["due"] = nil
+	}
+
+	if deadline != "" {
+		lang := deadlineLang
+		if lang == "" {
+			lang = s.cfg.DueLang
+		}
+		if lang == "" {
+			lang = "en"
+		}
+		updates["deadline"] = map[string]string{"date": deadline, "lang": lang}
+	} else {
+		updates["deadline"] = nil
+	}
+
+	if err := s.client.UpdateTask(taskID, updates); err != nil {
+		return err
+	}
+
+	if err := s.cache.Refresh(); err != nil {
+		utils.Log("warning: cache refresh failed: %v", err)
+	}
+	return nil
+}
+
 // --- helpers ---
+
+// reconstructEditInput builds a string that mirrors what the user would type to create a task,
+// used for pre-populating the edit input field
+func reconstructEditInput(task todoist.Task, projects []todoist.Project) string {
+	parts := []string{task.Content}
+
+	// Labels
+	for _, label := range task.Labels {
+		if strings.Contains(label, " ") {
+			parts = append(parts, "@("+label+")")
+		} else {
+			parts = append(parts, "@"+label)
+		}
+	}
+
+	// Project (skip Inbox as it's the default)
+	projectName := getProjectName(projects, task.ProjectID)
+	if projectName != "" && projectName != "Inbox" {
+		if strings.Contains(projectName, " ") {
+			parts = append(parts, "#("+projectName+")")
+		} else {
+			parts = append(parts, "#"+projectName)
+		}
+	}
+
+	// Priority (reverse-map: API 4→p1, 3→p2, 2→p3, 1→default/skip)
+	switch task.Priority {
+	case 4:
+		parts = append(parts, "p1")
+	case 3:
+		parts = append(parts, "p2")
+	case 2:
+		parts = append(parts, "p3")
+	}
+
+	// Due date
+	if task.Due != nil && task.Due.Date != "" {
+		if strings.Contains(task.Due.Date, "T") {
+			// Has time component: due:YYYY-MM-DDTHH:MM
+			datePart := task.Due.Date
+			if len(datePart) > 16 {
+				datePart = datePart[:16] // Trim seconds
+			}
+			parts = append(parts, "due:"+datePart)
+		} else {
+			parts = append(parts, "due:"+task.Due.Date)
+		}
+	}
+
+	// Deadline
+	if task.Deadline != nil && task.Deadline.Date != "" {
+		parts = append(parts, "{"+task.Deadline.Date+"}")
+	}
+
+	return strings.Join(parts, " ")
+}
 
 func parseDueDate(dateStr string) time.Time {
 	if strings.Contains(dateStr, "T") {
