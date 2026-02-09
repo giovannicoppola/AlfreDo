@@ -82,6 +82,29 @@
 				<false/>
 			</dict>
 		</array>
+		<key>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>482F337F-281C-4B45-834B-4F855F1A7C11</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>A985A202-AB01-4C63-B783-4D1198BD5D41</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
 		<array>
 			<dict>
@@ -116,6 +139,16 @@
 				<string>Complete this task! ✅</string>
 				<key>vitoclose</key>
 				<true/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</string>
+				<key>modifiers</key>
+				<integer>1835008</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
@@ -200,6 +233,16 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</string>
+				<key>modifiers</key>
+				<integer>1835008</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</string>
 				<key>modifiers</key>
 				<integer>262144</integer>
@@ -243,6 +286,16 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</string>
+				<key>modifiers</key>
+				<integer>1835008</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</string>
 				<key>modifiers</key>
 				<integer>262144</integer>
@@ -283,6 +336,16 @@
 				<string>Complete this task! ✅</string>
 				<key>vitoclose</key>
 				<true/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</string>
+				<key>modifiers</key>
+				<integer>1835008</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
@@ -671,6 +734,44 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>externaltriggerid</key>
+				<string>dueToday</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>0BCDBD24-4CD1-4749-8F72-5E66FCE1A265</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>recur_all</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>482F337F-281C-4B45-834B-4F855F1A7C11</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -695,7 +796,7 @@
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>recur_all</string>
+				<string>overdue</string>
 				<key>passinputasargument</key>
 				<true/>
 				<key>passvariables</key>
@@ -706,26 +807,7 @@
 			<key>type</key>
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>482F337F-281C-4B45-834B-4F855F1A7C11</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>dueToday</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>0BCDBD24-4CD1-4749-8F72-5E66FCE1A265</string>
+			<string>43950460-50F6-4975-9E1D-0240840285A7</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -900,39 +982,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>conditions</key>
-				<array>
-					<dict>
-						<key>inputstring</key>
-						<string>{var:myIter}</string>
-						<key>matchcasesensitive</key>
-						<false/>
-						<key>matchmode</key>
-						<integer>5</integer>
-						<key>matchstring</key>
-						<string></string>
-						<key>outputlabel</key>
-						<string>recur</string>
-						<key>uid</key>
-						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
-					</dict>
-				</array>
-				<key>elselabel</key>
-				<string>else</string>
-				<key>hideelse</key>
+				<key>concurrently</key>
 				<false/>
-			</dict>
-			<key>inboundconfig</key>
-			<dict>
-				<key>externalid</key>
-				<string>recur_conditional</string>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./alfredo-go delete "$myTaskID"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.utility.conditional</string>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>47D97373-8433-4825-8730-B8622E2C269D</string>
+			<string>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -985,7 +1053,7 @@
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>overdue</string>
+				<string>allTasks</string>
 				<key>passinputasargument</key>
 				<true/>
 				<key>passvariables</key>
@@ -996,7 +1064,44 @@
 			<key>type</key>
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>43950460-50F6-4975-9E1D-0240840285A7</string>
+			<string>95BD6F14-E649-45E8-A3E5-E03D7DDF2D1E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:myIter}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>5</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>recur</string>
+						<key>uid</key>
+						<string>1FA026B1-3B71-453D-A06C-420961683D39</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>inboundconfig</key>
+			<dict>
+				<key>externalid</key>
+				<string>recur_conditional</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>47D97373-8433-4825-8730-B8622E2C269D</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1120,7 +1225,7 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>allTasks</string>
+				<string>deadlineTasks</string>
 				<key>passinputasargument</key>
 				<true/>
 				<key>passvariables</key>
@@ -1131,7 +1236,7 @@ fi</string>
 			<key>type</key>
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>95BD6F14-E649-45E8-A3E5-E03D7DDF2D1E</string>
+			<string>D1E2F3A4-B5C6-7890-DEAD-LINE0TRIG001</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1312,25 +1417,6 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>deadlineTasks</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>D1E2F3A4-B5C6-7890-DEAD-LINE0TRIG001</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
 				<string>editTask</string>
 				<key>passinputasargument</key>
 				<true/>
@@ -1424,6 +1510,87 @@ fi</string>
 			<string>508D78D7-84F6-4456-BC43-4369B98A9F08</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:refreshkeyword}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>please wait while I refresh... ⏳</string>
+				<key>script</key>
+				<string>./alfredo-go rebuild
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>refresh Todoist database 👀</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>D3080812-B0C2-4214-B800-8CB5E9651ED1</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>4EEF423D-B6D9-4EB4-BFE9-5DDBEBC99391</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1522,6 +1689,25 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>externaltriggerid</key>
+				<string>allTasks</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>37E80F52-4A64-423A-B2AD-5B156696EE63</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -1553,25 +1739,6 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>externaltriggerid</key>
-				<string>allTasks</string>
-				<key>passinputasargument</key>
-				<false/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>37E80F52-4A64-423A-B2AD-5B156696EE63</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -1589,87 +1756,6 @@ fi</string>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>763BFBBE-BAC7-42CB-982B-C5639D52A785</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<false/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>keyword</key>
-				<string>{var:refreshkeyword}</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>please wait while I refresh... ⏳</string>
-				<key>script</key>
-				<string>./alfredo-go rebuild
-</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string>refresh Todoist database 👀</string>
-				<key>type</key>
-				<integer>0</integer>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>D3080812-B0C2-4214-B800-8CB5E9651ED1</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>0</integer>
-				<key>hotmod</key>
-				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>4EEF423D-B6D9-4EB4-BFE9-5DDBEBC99391</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -1761,35 +1847,46 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>Create new task</string>
 			<key>xpos</key>
-			<real>330</real>
+			<real>340</real>
 			<key>ypos</key>
-			<real>735</real>
+			<real>780</real>
 		</dict>
 		<key>0BCDBD24-4CD1-4749-8F72-5E66FCE1A265</key>
 		<dict>
 			<key>xpos</key>
-			<real>1640</real>
+			<real>1395</real>
 			<key>ypos</key>
-			<real>200</real>
+			<real>55</real>
 		</dict>
 		<key>16597C9F-FD3C-4531-8E13-4D4253644CC4</key>
 		<dict>
 			<key>xpos</key>
-			<real>1390</real>
+			<real>1165</real>
 			<key>ypos</key>
-			<real>260</real>
+			<real>215</real>
+		</dict>
+		<key>1AEF05C4-7203-44EE-9DED-8B37BA9F5984</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>11</integer>
+			<key>note</key>
+			<string>delete task 🗑️</string>
+			<key>xpos</key>
+			<real>755</real>
+			<key>ypos</key>
+			<real>265</real>
 		</dict>
 		<key>23271A22-E8F2-44F6-8E4C-FCB12BC009E2</key>
 		<dict>
 			<key>xpos</key>
-			<real>585</real>
+			<real>595</real>
 			<key>ypos</key>
-			<real>665</real>
+			<real>710</real>
 		</dict>
 		<key>28C94810-BE49-43D5-A1CF-8B1008F6EF69</key>
 		<dict>
 			<key>xpos</key>
-			<real>205</real>
+			<real>60</real>
 			<key>ypos</key>
 			<real>375</real>
 		</dict>
@@ -1807,37 +1904,37 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>all tasks</string>
 			<key>xpos</key>
-			<real>470</real>
+			<real>325</real>
 			<key>ypos</key>
 			<real>30</real>
 		</dict>
 		<key>43950460-50F6-4975-9E1D-0240840285A7</key>
 		<dict>
 			<key>xpos</key>
-			<real>1640</real>
+			<real>1395</real>
 			<key>ypos</key>
-			<real>320</real>
+			<real>175</real>
 		</dict>
 		<key>47D97373-8433-4825-8730-B8622E2C269D</key>
 		<dict>
 			<key>xpos</key>
-			<real>1275</real>
+			<real>1000</real>
 			<key>ypos</key>
-			<real>270</real>
+			<real>320</real>
 		</dict>
 		<key>482F337F-281C-4B45-834B-4F855F1A7C11</key>
 		<dict>
 			<key>xpos</key>
-			<real>1100</real>
+			<real>955</real>
 			<key>ypos</key>
 			<real>140</real>
 		</dict>
 		<key>4EEF423D-B6D9-4EB4-BFE9-5DDBEBC99391</key>
 		<dict>
 			<key>xpos</key>
-			<real>1335</real>
+			<real>1060</real>
 			<key>ypos</key>
-			<real>815</real>
+			<real>680</real>
 		</dict>
 		<key>508D78D7-84F6-4456-BC43-4369B98A9F08</key>
 		<dict>
@@ -1853,7 +1950,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>Due TODAY</string>
 			<key>xpos</key>
-			<real>465</real>
+			<real>320</real>
 			<key>ypos</key>
 			<real>370</real>
 		</dict>
@@ -1864,14 +1961,14 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>overdue</string>
 			<key>xpos</key>
-			<real>470</real>
+			<real>325</real>
 			<key>ypos</key>
 			<real>205</real>
 		</dict>
 		<key>59135803-ED32-4EE1-BAC8-E6AE743DBC33</key>
 		<dict>
 			<key>xpos</key>
-			<real>725</real>
+			<real>580</real>
 			<key>ypos</key>
 			<real>15</real>
 		</dict>
@@ -1882,16 +1979,16 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>Notes with deadline</string>
 			<key>xpos</key>
-			<real>465</real>
+			<real>320</real>
 			<key>ypos</key>
 			<real>510</real>
 		</dict>
 		<key>6F8965A3-DFDB-487E-B942-88D5925BB596</key>
 		<dict>
 			<key>xpos</key>
-			<real>55</real>
+			<real>65</real>
 			<key>ypos</key>
-			<real>665</real>
+			<real>710</real>
 		</dict>
 		<key>763BFBBE-BAC7-42CB-982B-C5639D52A785</key>
 		<dict>
@@ -1900,16 +1997,16 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>create task 🗓️</string>
 			<key>xpos</key>
-			<real>580</real>
+			<real>590</real>
 			<key>ypos</key>
-			<real>790</real>
+			<real>835</real>
 		</dict>
 		<key>77A0EA04-BB22-4088-8CD6-46C8369852EE</key>
 		<dict>
 			<key>xpos</key>
-			<real>55</real>
+			<real>65</real>
 			<key>ypos</key>
-			<real>790</real>
+			<real>835</real>
 		</dict>
 		<key>81A7FDDF-890B-49BE-907D-7ACFD33A1332</key>
 		<dict>
@@ -1918,9 +2015,9 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>complete task ✅</string>
 			<key>xpos</key>
-			<real>680</real>
+			<real>580</real>
 			<key>ypos</key>
-			<real>140</real>
+			<real>145</real>
 		</dict>
 		<key>8626AD51-37A7-478D-9561-F5F20EF86C08</key>
 		<dict>
@@ -1929,16 +2026,16 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>Open task in app or todoist website</string>
 			<key>xpos</key>
-			<real>1415</real>
+			<real>1150</real>
 			<key>ypos</key>
-			<real>420</real>
+			<real>390</real>
 		</dict>
 		<key>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>8</integer>
 			<key>xpos</key>
-			<real>680</real>
+			<real>535</real>
 			<key>ypos</key>
 			<real>295</real>
 		</dict>
@@ -1947,16 +2044,16 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>colorindex</key>
 			<integer>2</integer>
 			<key>xpos</key>
-			<real>840</real>
+			<real>850</real>
 			<key>ypos</key>
-			<real>830</real>
+			<real>875</real>
 		</dict>
 		<key>95BD6F14-E649-45E8-A3E5-E03D7DDF2D1E</key>
 		<dict>
 			<key>xpos</key>
-			<real>1640</real>
+			<real>1395</real>
 			<key>ypos</key>
-			<real>440</real>
+			<real>295</real>
 		</dict>
 		<key>A1B2C3D4-E5F6-7890-ABCD-EDIT0ACTION1</key>
 		<dict>
@@ -1965,7 +2062,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>update task ✏️</string>
 			<key>xpos</key>
-			<real>895</real>
+			<real>750</real>
 			<key>ypos</key>
 			<real>445</real>
 		</dict>
@@ -1976,14 +2073,14 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>Edit task ✏️</string>
 			<key>xpos</key>
-			<real>680</real>
+			<real>535</real>
 			<key>ypos</key>
 			<real>450</real>
 		</dict>
 		<key>A1B2C3D4-E5F6-7890-ABCD-EDIT0TRIGGE01</key>
 		<dict>
 			<key>xpos</key>
-			<real>900</real>
+			<real>755</real>
 			<key>ypos</key>
 			<real>575</real>
 		</dict>
@@ -1999,28 +2096,28 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>colorindex</key>
 			<integer>4</integer>
 			<key>xpos</key>
-			<real>1095</real>
+			<real>950</real>
 			<key>ypos</key>
 			<real>440</real>
 		</dict>
 		<key>B27368EE-20D2-4988-B4CB-6457C95E8A1E</key>
 		<dict>
 			<key>xpos</key>
-			<real>195</real>
+			<real>50</real>
 			<key>ypos</key>
 			<real>35</real>
 		</dict>
 		<key>B8C6ADC3-9493-4F49-8D3F-56910FA3B5B7</key>
 		<dict>
 			<key>xpos</key>
-			<real>200</real>
+			<real>55</real>
 			<key>ypos</key>
 			<real>205</real>
 		</dict>
 		<key>C62F7F7D-3666-4A78-96F0-B1DBC1C067F9</key>
 		<dict>
 			<key>xpos</key>
-			<real>1100</real>
+			<real>955</real>
 			<key>ypos</key>
 			<real>15</real>
 		</dict>
@@ -2031,23 +2128,23 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>note</key>
 			<string>reschedule task 􀚁</string>
 			<key>xpos</key>
-			<real>930</real>
+			<real>785</real>
 			<key>ypos</key>
 			<real>35</real>
 		</dict>
 		<key>D1E2F3A4-B5C6-7890-DEAD-LINE0TRIG001</key>
 		<dict>
 			<key>xpos</key>
-			<real>1635</real>
+			<real>1390</real>
 			<key>ypos</key>
-			<real>555</real>
+			<real>410</real>
 		</dict>
 		<key>D3080812-B0C2-4214-B800-8CB5E9651ED1</key>
 		<dict>
 			<key>xpos</key>
-			<real>1600</real>
+			<real>1325</real>
 			<key>ypos</key>
-			<real>815</real>
+			<real>680</real>
 		</dict>
 		<key>EDF76437-E8E9-4B1C-864E-0A64B2F4DB61</key>
 		<dict>

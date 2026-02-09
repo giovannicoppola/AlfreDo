@@ -161,6 +161,27 @@ func (c *Client) CompleteTask(taskID string) error {
 	return nil
 }
 
+// DeleteTask deletes a task
+func (c *Client) DeleteTask(taskID string) error {
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/tasks/%s", c.baseURL, taskID), nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Bearer "+c.token)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("failed to delete task: status %d, body: %s", resp.StatusCode, string(body))
+	}
+	return nil
+}
+
 // CreateTask creates a new task via the REST API
 func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline *Deadline, description string) error {
 	payload := map[string]any{

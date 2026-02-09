@@ -381,6 +381,9 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 							"myTaskID": task.ID,
 						},
 					},
+					"cmd+ctrl+alt": {
+						Subtitle: "Delete this task 🗑️",
+					},
 				},
 				Icon: &alfred.Icon{Path: icon},
 			})
@@ -563,6 +566,18 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 // CompleteTask completes a task and refreshes cache
 func (s *TaskService) CompleteTask(taskID string) error {
 	if err := s.client.CompleteTask(taskID); err != nil {
+		return err
+	}
+	// Refresh cache in background (best effort)
+	if err := s.cache.Refresh(); err != nil {
+		utils.Log("warning: cache refresh failed: %v", err)
+	}
+	return nil
+}
+
+// DeleteTask deletes a task and refreshes cache
+func (s *TaskService) DeleteTask(taskID string) error {
+	if err := s.client.DeleteTask(taskID); err != nil {
 		return err
 	}
 	// Refresh cache in background (best effort)

@@ -67,11 +67,12 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - launch with keyword or custom hotkey. You can start from 1) tasks due today, 2) tasks overdue, 3) all tasks, or 4) tasks with a deadline.
 ![](images/demo.png)
 - Use multiple strings, or label/projects to refine search. Use `@` to enter one or more labels, `#` to enter a project/section. 
-- Once a task is selected, you can do one of four things:
+- Once a task is selected, you can do one of five things:
 	1. `enter` ↩️ will open the task on [Todoist](https://todoist.com/) (default) or in the Todoist app, based on user preference set in `Configure Workflow`
 	2. `shift-enter` ⇧↩️ will complete the task
 	3. `ctrl-enter` ^↩️ will open a menu to reschedule the task. Choose one of the preset options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) or without (`YYYY-MM-DD`) time, or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will reschedule in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). [Natural language dates](#natural-language-dates) are also supported (e.g. `tomorrow`, `next friday`).
 	4. `alt-enter` ⌥↩️ will open the task for editing. The current task content, labels, project, priority, due date, and deadline are pre-populated in the input field. Modify any attribute using the same syntax as task creation, then press `shift-enter` ⇧↩️ to save.
+	5. `ctrl-alt-cmd-enter` ⌃⌥⌘↩️ will delete the task immediately (no confirmation)
 ![](images/reschedule.png)
 	
 
@@ -95,7 +96,7 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 
 
 ## Database refresh 🔄
-- will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, or rescheduled, or...
+- will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, rescheduled, or deleted, or...
 	- `todoist::refresh` to force database refresh
 
 
@@ -122,6 +123,9 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 <h1 id="new-features-v05">New features in version 0.5 🆕</h1>
 
 Version 0.5 is a complete rewrite in Go, bringing several new features:
+
+### Delete tasks 🗑️
+- Select a task from any query view, then press `ctrl-alt-cmd-enter` ⌃⌥⌘↩️ to delete it immediately (no confirmation)
 
 ### Edit tasks ✏️
 - Select a task from any query view, then press `alt-enter` ⌥↩️ to edit it
