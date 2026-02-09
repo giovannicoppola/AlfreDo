@@ -120,8 +120,8 @@ src="https://img.shields.io/github/downloads/giovannicoppola/alfreDo/total?color
 - Thanks to Werner Dijkerman for help with troubleshooting. 
 	
 	
-<h1 id="new-features-v05">New features in version 0.5 🆕</h1>
-
+<h1 id="new-features-v05">New features in version 0.5-</h1>
+🆕
 Version 0.5 is a complete rewrite in Go, bringing several new features:
 
 ### Delete tasks 🗑️
