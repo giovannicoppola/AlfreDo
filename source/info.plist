@@ -2410,6 +2410,8 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<string>taskOpen</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>0.5</string>
 	<key>webaddress</key>
