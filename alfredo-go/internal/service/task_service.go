@@ -78,21 +78,55 @@ func (s *TaskService) QueryTasks(mode, input string) (*alfred.Output, error) {
 
 	switch mode {
 	case "today":
+		seen := map[string]bool{}
 		for _, t := range data.Tasks {
 			if t.Due != nil && strings.Split(t.Due.Date, "T")[0] == today {
 				toShow = append(toShow, t)
+				seen[t.ID] = true
 			}
 		}
-		sort.Slice(toShow, func(i, j int) bool { return toShow[i].Due.Date < toShow[j].Due.Date })
-		icon = "icons/today.png"
-
-	case "due":
 		for _, t := range data.Tasks {
-			if t.Due != nil && t.Due.Date < today {
+			if !seen[t.ID] && t.Deadline != nil && t.Deadline.Date == today {
 				toShow = append(toShow, t)
 			}
 		}
-		sort.Slice(toShow, func(i, j int) bool { return toShow[i].Due.Date < toShow[j].Due.Date })
+		sort.Slice(toShow, func(i, j int) bool {
+			di := ""
+			if toShow[i].Due != nil {
+				di = toShow[i].Due.Date
+			}
+			dj := ""
+			if toShow[j].Due != nil {
+				dj = toShow[j].Due.Date
+			}
+			return di < dj
+		})
+		icon = "icons/today.png"
+
+	case "due":
+		seen := map[string]bool{}
+		for _, t := range data.Tasks {
+			if t.Due != nil && t.Due.Date < today {
+				toShow = append(toShow, t)
+				seen[t.ID] = true
+			}
+		}
+		for _, t := range data.Tasks {
+			if !seen[t.ID] && t.Deadline != nil && t.Deadline.Date < today {
+				toShow = append(toShow, t)
+			}
+		}
+		sort.Slice(toShow, func(i, j int) bool {
+			di := ""
+			if toShow[i].Due != nil {
+				di = toShow[i].Due.Date
+			}
+			dj := ""
+			if toShow[j].Due != nil {
+				dj = toShow[j].Due.Date
+			}
+			return di < dj
+		})
 		icon = "icons/overdue.png"
 
 	case "all":

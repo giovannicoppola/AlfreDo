@@ -214,9 +214,9 @@ func (c *Client) CreateTask(content string, labels []string, projectID, sectionI
 		}
 	}
 	if deadline != nil {
-		payload["deadline"] = map[string]string{
-			"date": deadline.Date,
-			"lang": deadline.Lang,
+		payload["deadline_date"] = deadline.Date
+		if deadline.Lang != "" {
+			payload["deadline_lang"] = deadline.Lang
 		}
 	}
 
