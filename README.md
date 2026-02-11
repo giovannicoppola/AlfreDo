@@ -144,7 +144,7 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - Inline date detection: simply type `buy milk tomorrow` or `meeting next friday at 3pm` — dates are recognized automatically from the task content
 - **Multi-language support**: dates are resolved locally based on your system language (`LANG` environment variable). Supported languages: Danish, Dutch, English, Finnish, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Chinese
 - Examples: `due:domani` (Italian), `due:morgen` (German), `{demain}` (French), `nachsten freitag` (German, "next Friday")
-- Multi-word expressions with "next" prefixes are supported (e.g., `prossimo venerdì`, `nächsten Freitag`, `próximo lunes`)
+- Multi-word expressions with "next" prefixes are supported (e.g., `venerdì prossimo`, `nächsten Freitag`, `próximo lunes`)
 - Rescheduling also supports natural language input
 - All dates are resolved locally to `YYYY-MM-DD` format before being sent to the Todoist API
 
