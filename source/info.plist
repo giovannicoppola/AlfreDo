@@ -1005,6 +1005,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>externaltriggerid</key>
+				<string>allTasks</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>95BD6F14-E649-45E8-A3E5-E03D7DDF2D1E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -1048,25 +1067,6 @@
 			<string>879C8F9C-7BCF-42B8-8FF4-227C4EDE9026</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>allTasks</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>95BD6F14-E649-45E8-A3E5-E03D7DDF2D1E</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -2352,7 +2352,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>Added via AlfreDo - {timestamp}</string>
+				<string></string>
 				<key>required</key>
 				<false/>
 				<key>trim</key>
@@ -2361,7 +2361,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 				<integer>3</integer>
 			</dict>
 			<key>description</key>
-			<string>Optional. Description string added to all tasks created via AlfreDo. {timestamp} will add a timestamp</string>
+			<string>Optional. Description string added to all tasks created via AlfreDo. {timestamp} will add a timestamp. Example: 'Added via AlfreDo - {timestamp}'</string>
 			<key>label</key>
 			<string>Description Stamp</string>
 			<key>type</key>
@@ -2420,7 +2420,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.5</string>
+	<string>0.5.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>
