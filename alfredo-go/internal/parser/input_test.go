@@ -368,3 +368,218 @@ func TestParseNewTaskInputInlineNLP(t *testing.T) {
 		t.Errorf("DueDate should be empty for 'buy milk', got %q", parsed.DueDate)
 	}
 }
+
+func TestExtractDuration(t *testing.T) {
+	tests := []struct {
+		name            string
+		content         string
+		expectedMinutes int
+		expectedContent string
+	}{
+		{
+			name:            "30 minutes",
+			content:         "Do something for 30 minutes",
+			expectedMinutes: 30,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "30m",
+			content:         "Do something for 30m",
+			expectedMinutes: 30,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "2 hours",
+			content:         "Do something for 2 hours",
+			expectedMinutes: 120,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "2h",
+			content:         "Do something for 2h",
+			expectedMinutes: 120,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "2h15m",
+			content:         "Do something for 2h15m",
+			expectedMinutes: 135,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "2h 15m",
+			content:         "Do something for 2h 15m",
+			expectedMinutes: 135,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "3 hours",
+			content:         "Do something for 3 hours",
+			expectedMinutes: 180,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "no duration",
+			content:         "Do something",
+			expectedMinutes: 0,
+			expectedContent: "Do something",
+		},
+		{
+			name:            "1 hour 30 minutes",
+			content:         "Meeting for 1 hour 30 minutes",
+			expectedMinutes: 90,
+			expectedContent: "Meeting",
+		},
+		{
+			name:            "45 mins",
+			content:         "Call for 45 mins",
+			expectedMinutes: 45,
+			expectedContent: "Call",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minutes, content := extractDuration(tt.content)
+			if minutes != tt.expectedMinutes {
+				t.Errorf("extractDuration(%q) minutes = %d, want %d", tt.content, minutes, tt.expectedMinutes)
+			}
+			if content != tt.expectedContent {
+				t.Errorf("extractDuration(%q) content = %q, want %q", tt.content, content, tt.expectedContent)
+			}
+		})
+	}
+}
+
+func TestIsDueDateWithTime(t *testing.T) {
+	tests := []struct {
+		name     string
+		dueDate  string
+		expected bool
+	}{
+		{
+			name:     "ISO 8601 with time",
+			dueDate:  "2025-05-06T17:00:00",
+			expected: true,
+		},
+		{
+			name:     "date with colon time",
+			dueDate:  "2025-05-06 17:00",
+			expected: true,
+		},
+		{
+			name:     "date only",
+			dueDate:  "2025-05-06",
+			expected: false,
+		},
+		{
+			name:     "empty string",
+			dueDate:  "",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isDueDateWithTime(tt.dueDate)
+			if result != tt.expected {
+				t.Errorf("isDueDateWithTime(%q) = %v, want %v", tt.dueDate, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestParseNewTaskInputWithDuration(t *testing.T) {
+	ctx := &InputContext{
+		AllLabels:     []string{},
+		AllProjects:   []string{},
+		LabelCounts:   map[string]int{},
+		ProjectCounts: map[string]int{},
+		PartialMatch:  true,
+		Lang:          "en",
+	}
+
+	tests := []struct {
+		name            string
+		input           string
+		expectedContent string
+		expectedMinutes int
+		hasDueDateTime  bool
+	}{
+		{
+			name:            "tomorrow at 5pm for 30 minutes",
+			input:           "Do something tomorrow at 5pm for 30 minutes",
+			expectedContent: "Do something",
+			expectedMinutes: 30,
+			hasDueDateTime:  true,
+		},
+		{
+			name:            "tomorrow at 5pm for 30m",
+			input:           "Do something tomorrow at 5pm for 30m",
+			expectedContent: "Do something",
+			expectedMinutes: 30,
+			hasDueDateTime:  true,
+		},
+		{
+			name:            "at 5pm for 2h tomorrow",
+			input:           "Do something at 5pm for 2h tomorrow",
+			expectedContent: "Do something",
+			expectedMinutes: 120,
+			hasDueDateTime:  true,
+		},
+		{
+			name:            "at 5pm for 2h15m tomorrow",
+			input:           "Do something at 5pm for 2h15m tomorrow",
+			expectedContent: "Do something",
+			expectedMinutes: 135,
+			hasDueDateTime:  true,
+		},
+		{
+			name:            "for 3 hours tomorrow at 5pm",
+			input:           "Do something for 3 hours tomorrow at 5pm",
+			expectedContent: "Do something",
+			expectedMinutes: 180,
+			hasDueDateTime:  true,
+		},
+		{
+			name:            "tomorrow for 30m (no time, no duration extraction)",
+			input:           "Do something tomorrow for 30m",
+			expectedContent: "Do something for 30m",
+			expectedMinutes: 0,
+			hasDueDateTime:  false,
+		},
+		{
+			name:            "at 5pm for 1h (today)",
+			input:           "Do something at 5pm for 1h",
+			expectedContent: "Do something",
+			expectedMinutes: 60,
+			hasDueDateTime:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			parsed, _, needsExit := ParseNewTaskInput(tt.input, ctx)
+			if needsExit {
+				t.Fatal("expected no exit")
+			}
+
+			if parsed.Content != tt.expectedContent {
+				t.Errorf("Content = %q, want %q", parsed.Content, tt.expectedContent)
+			}
+
+			if tt.hasDueDateTime {
+				if parsed.DueDate == "" {
+					t.Error("DueDate should not be empty")
+				}
+				if !isDueDateWithTime(parsed.DueDate) {
+					t.Errorf("DueDate %q should contain time component", parsed.DueDate)
+				}
+			}
+
+			if parsed.DurationMinutes != tt.expectedMinutes {
+				t.Errorf("DurationMinutes = %d, want %d", parsed.DurationMinutes, tt.expectedMinutes)
+			}
+		})
+	}
+}

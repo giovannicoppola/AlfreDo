@@ -183,7 +183,7 @@ func (c *Client) DeleteTask(taskID string) error {
 }
 
 // CreateTask creates a new task via the REST API
-func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline *Deadline, description string) error {
+func (c *Client) CreateTask(content string, labels []string, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline *Deadline, description string, durationMinutes int) error {
 	payload := map[string]any{
 		"content":  content,
 		"priority": priority,
@@ -218,6 +218,10 @@ func (c *Client) CreateTask(content string, labels []string, projectID, sectionI
 		if deadline.Lang != "" {
 			payload["deadline_lang"] = deadline.Lang
 		}
+	}
+	if durationMinutes > 0 {
+		payload["duration"] = durationMinutes
+		payload["duration_unit"] = "minute"
 	}
 
 	body, err := json.Marshal(payload)

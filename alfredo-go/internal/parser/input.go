@@ -12,6 +12,7 @@ import (
 
 var inputPattern = regexp.MustCompile(`\s*([@#]\([^)]+\)|\S+)\s*`)
 var deadlinePattern = regexp.MustCompile(`\{([^}]+)\}`)
+var durationPattern = regexp.MustCompile(`(?i)\bfor\s+(\d+)\s*(minutes?|mins?|m|hours?|hrs?|h)\b`)
 
 // ParseInput tokenizes user input, keeping together elements with spaces if they are
 // in parentheses and preceded by # or @
@@ -26,30 +27,31 @@ func ParseInput(input string) []string {
 
 // ParsedTask holds the result of parsing a new-task input string
 type ParsedTask struct {
-	Content      string
-	Labels       []string
-	ProjectName  string // includes # prefix
-	ProjectID    string
-	SectionName  string
-	SectionID    string
-	DueDate      string
-	DueString    string // raw natural language text (e.g., "tomorrow")
-	DueLang      string // language for Todoist NLP (e.g., "en")
-	Deadline     string // resolved deadline date (YYYY-MM-DD)
-	DeadlineRaw  string // raw deadline text for NLP (e.g., "friday")
-	Priority     int    // Todoist API priority (4=highest, 1=lowest)
-	PrioString   string
-	RawInput     string
+	Content         string
+	Labels          []string
+	ProjectName     string // includes # prefix
+	ProjectID       string
+	SectionName     string
+	SectionID       string
+	DueDate         string
+	DueString       string // raw natural language text (e.g., "tomorrow")
+	DueLang         string // language for Todoist NLP (e.g., "en")
+	Deadline        string // resolved deadline date (YYYY-MM-DD)
+	DeadlineRaw     string // raw deadline text for NLP (e.g., "friday")
+	Priority        int    // Todoist API priority (4=highest, 1=lowest)
+	PrioString      string
+	DurationMinutes int // duration amount in minutes (e.g., 30)
+	RawInput        string
 }
 
 // InputContext holds contextual data needed during parsing
 type InputContext struct {
-	AllLabels     []string        // prefixed with @
-	AllProjects   []string        // prefixed with #
-	LabelCounts   map[string]int  // label name (no prefix) -> count
-	ProjectCounts map[string]int  // project name (no prefix) -> count
+	AllLabels     []string       // prefixed with @
+	AllProjects   []string       // prefixed with #
+	LabelCounts   map[string]int // label name (no prefix) -> count
+	ProjectCounts map[string]int // project name (no prefix) -> count
 	PartialMatch  bool
-	Lang          string          // system language code (e.g., "it", "de", "en")
+	Lang          string // system language code (e.g., "it", "de", "en")
 }
 
 // ParseNewTaskInput parses raw input for new task creation.
@@ -235,17 +237,51 @@ func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []Autocomp
 
 	parsed.Content = strings.Join(taskElements, " ")
 
+	// Try to extract duration first, but don't remove it from content yet
+	var potentialDuration int
+	var contentWithoutDuration string
+	if parsed.Content != "" {
+		potentialDuration, contentWithoutDuration = extractDuration(parsed.Content)
+	}
+
 	// Inline date detection: if no explicit due: was set, try NLP on the content
-	if parsed.DueDate == "" && parsed.Content != "" {
-		if nlp := ParseNaturalDateInText(parsed.Content, lang); nlp != nil {
+	// Use content WITHOUT duration for better NLP parsing
+	contentForNLP := parsed.Content
+	if potentialDuration > 0 {
+		contentForNLP = contentWithoutDuration
+	}
+
+	if parsed.DueDate == "" && contentForNLP != "" {
+		if nlp := ParseNaturalDateInText(contentForNLP, lang); nlp != nil {
 			parsed.DueDate = FormatResolvedDate(nlp.Time)
-			// Strip matched date text from content
-			cleaned := parsed.Content[:nlp.Start] + parsed.Content[nlp.End:]
-			cleaned = strings.TrimSpace(cleaned)
-			for strings.Contains(cleaned, "  ") {
-				cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+
+			// Check if we should apply duration
+			// Duration applies when: parsed date has time component AND includes actual date (not just time)
+			shouldApplyDuration := potentialDuration > 0 && isDueDateWithTime(parsed.DueDate) && hasActualDate(nlp.Text)
+
+			// Use cleaned content if we're applying duration, otherwise keep original
+			if shouldApplyDuration {
+				// Strip matched date text from cleaned content (without duration)
+				cleaned := contentForNLP[:nlp.Start] + contentForNLP[nlp.End:]
+				cleaned = strings.TrimSpace(cleaned)
+				// Remove orphaned prepositions (at, on, by, etc.)
+				cleaned = cleanupOrphanedPrepositions(cleaned)
+				for strings.Contains(cleaned, "  ") {
+					cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+				}
+				parsed.Content = cleaned
+				parsed.DurationMinutes = potentialDuration
+			} else {
+				// Don't apply duration, use original content and strip only the date
+				cleaned := parsed.Content[:nlp.Start] + parsed.Content[nlp.End:]
+				cleaned = strings.TrimSpace(cleaned)
+				// Remove orphaned prepositions (at, on, by, etc.)
+				cleaned = cleanupOrphanedPrepositions(cleaned)
+				for strings.Contains(cleaned, "  ") {
+					cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+				}
+				parsed.Content = cleaned
 			}
-			parsed.Content = cleaned
 		}
 	}
 
@@ -378,4 +414,116 @@ func itoa(n int) string {
 		s = "-" + s
 	}
 	return s
+}
+
+// isDueDateWithTime checks if the due date string includes a time component
+func isDueDateWithTime(dueDate string) bool {
+	// Due dates with time typically contain 'T' (ISO 8601) or time indicators
+	return strings.Contains(dueDate, "T") || strings.Contains(dueDate, ":")
+}
+
+// cleanupOrphanedPrepositions removes trailing prepositions left after date extraction
+func cleanupOrphanedPrepositions(content string) string {
+	// Common prepositions that might be left behind after date extraction
+	orphanedPreps := []string{" at", " on", " by", " in", " from", " to"}
+
+	for _, prep := range orphanedPreps {
+		if strings.HasSuffix(content, prep) {
+			content = strings.TrimSuffix(content, prep)
+			content = strings.TrimSpace(content)
+		}
+	}
+
+	return content
+}
+
+// hasActualDate checks if the NLP matched text is meaningful for duration extraction
+// Returns true if it contains date keywords OR time indicators (since time implies "today")
+func hasActualDate(nlpText string) bool {
+	lower := strings.ToLower(nlpText)
+	// Check for date keywords (day names, relative dates, etc.)
+	dateKeywords := []string{
+		"today", "tomorrow", "yesterday",
+		"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+		"next", "last", "week", "month", "day",
+		"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
+	}
+
+	for _, keyword := range dateKeywords {
+		if strings.Contains(lower, keyword) {
+			return true
+		}
+	}
+
+	// Also return true if it contains time indicators (am/pm, colons)
+	// because time-only inputs like "5pm" implicitly mean "today at 5pm"
+	timePattern := regexp.MustCompile(`(?i)\d{1,2}(:\d{2})?\s*(am|pm)|\d{1,2}:\d{2}`)
+	return timePattern.MatchString(nlpText)
+}
+
+// extractDuration extracts duration from content and returns (minutes, cleanedContent)
+// Supports formats like "30 minutes", "2h", "2h15m", etc.
+func extractDuration(content string) (int, string) {
+	// Pattern matches "for X minutes/hours" with various formats
+	// e.g., "for 30 minutes", "for 2h", "for 2h15m"
+
+	// First, try to match combined format like "2h15m"
+	combinedPattern := regexp.MustCompile(`(?i)\bfor\s+(?:(\d+)\s*h(?:ours?|rs?)?)?(?:\s*(\d+)\s*m(?:inutes?|ins?)?)?`)
+	if m := combinedPattern.FindStringSubmatchIndex(content); m != nil {
+		matchStart, matchEnd := m[0], m[1]
+		hoursIdx, minutesIdx := m[2], m[4]
+
+		totalMinutes := 0
+
+		// Extract hours if present
+		if hoursIdx != -1 {
+			hoursStr := content[hoursIdx:m[3]]
+			if hours, err := strconv.Atoi(hoursStr); err == nil {
+				totalMinutes += hours * 60
+			}
+		}
+
+		// Extract minutes if present
+		if minutesIdx != -1 {
+			minutesStr := content[minutesIdx:m[5]]
+			if minutes, err := strconv.Atoi(minutesStr); err == nil {
+				totalMinutes += minutes
+			}
+		}
+
+		if totalMinutes > 0 {
+			// Remove the duration text from content
+			cleaned := content[:matchStart] + content[matchEnd:]
+			cleaned = strings.TrimSpace(cleaned)
+			for strings.Contains(cleaned, "  ") {
+				cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+			}
+			return totalMinutes, cleaned
+		}
+	}
+
+	// Fallback to simple single-unit pattern
+	if m := durationPattern.FindStringSubmatch(content); m != nil {
+		amount, _ := strconv.Atoi(m[1])
+		unit := strings.ToLower(m[2])
+
+		minutes := 0
+		switch {
+		case strings.HasPrefix(unit, "h"):
+			minutes = amount * 60
+		case strings.HasPrefix(unit, "m"):
+			minutes = amount
+		}
+
+		if minutes > 0 {
+			cleaned := durationPattern.ReplaceAllString(content, "")
+			cleaned = strings.TrimSpace(cleaned)
+			for strings.Contains(cleaned, "  ") {
+				cleaned = strings.ReplaceAll(cleaned, "  ", " ")
+			}
+			return minutes, cleaned
+		}
+	}
+
+	return 0, content
 }
