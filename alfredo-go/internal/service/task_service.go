@@ -570,26 +570,32 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 		deadlineStringF = "🎯 deadline:" + parsed.Deadline
 	}
 
+	var durationStringF string
+	if parsed.DurationMinutes > 0 {
+		durationStringF = fmt.Sprintf("⏱️ %dm", parsed.DurationMinutes)
+	}
+
 	projStringF := "📋" + parsed.ProjectName
 
-	subtitle := fmt.Sprintf("%s %s %s %s %s %s ⇧↩️ to create",
-		projStringF, sectStringF, tagStringF, prioStringF, dueStringF, deadlineStringF)
+	subtitle := fmt.Sprintf("%s %s %s %s %s %s %s ⇧↩️ to create",
+		projStringF, sectStringF, tagStringF, prioStringF, dueStringF, deadlineStringF, durationStringF)
 
 	output.Items = append(output.Items, alfred.OutputItem{
 		Title:    parsed.Content,
 		Subtitle: subtitle,
 		Arg:      input,
 		Variables: map[string]any{
-			"myTaskText":    parsed.Content,
-			"myTagString":   tagString,
-			"myProjectID":   parsed.ProjectID,
-			"mySectionID":   parsed.SectionID,
-			"myDueDate":     parsed.DueDate,
-			"myDueString":   parsed.DueString,
-			"myDueLang":     parsed.DueLang,
-			"myDeadline":    parsed.Deadline,
-			"myDeadlineRaw": parsed.DeadlineRaw,
-			"myPriority":    parsed.Priority,
+			"myTaskText":       parsed.Content,
+			"myTagString":      tagString,
+			"myProjectID":      parsed.ProjectID,
+			"mySectionID":      parsed.SectionID,
+			"myDueDate":        parsed.DueDate,
+			"myDueString":      parsed.DueString,
+			"myDueLang":        parsed.DueLang,
+			"myDeadline":       parsed.Deadline,
+			"myDeadlineRaw":    parsed.DeadlineRaw,
+			"myPriority":       parsed.Priority,
+			"myDurationMinutes": parsed.DurationMinutes,
 		},
 		Icon: &alfred.Icon{Path: "icons/newTask.png"},
 	})
@@ -622,7 +628,7 @@ func (s *TaskService) DeleteTask(taskID string) error {
 }
 
 // CreateTask creates a new task via the API
-func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string) error {
+func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string, durationMinutes int) error {
 	var labels []string
 	if labelsStr != "" {
 		labels = strings.Split(labelsStr, ",,..,,")
@@ -648,7 +654,7 @@ func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDa
 			time.Now().Format("Monday, January 2, 2006, 3:04:05 pm"))
 	}
 
-	if err := s.client.CreateTask(content, labels, projectID, sectionID, dueDate, dueString, dueLang, priority, dl, description); err != nil {
+	if err := s.client.CreateTask(content, labels, projectID, sectionID, dueDate, dueString, dueLang, priority, dl, description, durationMinutes); err != nil {
 		return err
 	}
 
