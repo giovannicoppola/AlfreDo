@@ -1832,8 +1832,8 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
   - ctrl-alt-cmd-enter ⌃⌥⌘↩️ will delete the task 
 
 ## Creating new tasks ⭐
-  - launch with keyword (default: `!!!`) or hotkey. Use:
-    - `@` to enter one or more labels (new ones can be created here), 
+- launch with keyword (default: `!!!`) or hotkey. Use:
+	- `@` to enter one or more labels (new ones can be created here), 
     - `#` to enter a project (`Inbox` will be used if none entered),
     - `due:` to enter a due date, `p[1-4]` to enter a priority. As in reschedule, choose one of the options, or enter a date in international format, with (`YYYY-MM-DDTHH:MM`) of without (`YYYY-MM-DD`) time, or enter a number of days. or enter a number of days. You can also use `w` or `m` after the number to enter weeks and months, respectively (e.g. `10w` will set a due date in 10 weeks). Time (in 24h format) can be added after these shortcuts as well (e.g. `7w13:13`). 
     - {deadline} to set a deadline using curly braces: {YYYY-MM-DD}, or relative expressions like {7d}, {3w}, {2m}. Natural language deadlines are also supported: {next friday}, {tomorrow} 
@@ -2420,7 +2420,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.5.2</string>
+	<string>0.6</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>
