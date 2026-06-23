@@ -468,7 +468,7 @@ func extractDuration(content string) (int, string) {
 	// e.g., "for 30 minutes", "for 2h", "for 2h15m"
 
 	// First, try to match combined format like "2h15m"
-	combinedPattern := regexp.MustCompile(`(?i)\bfor\s+(?:(\d+)\s*h(?:ours?|rs?)?)?(?:\s*(\d+)\s*m(?:inutes?|ins?)?)?`)
+	combinedPattern := regexp.MustCompile(`(?i)\bfor\s+(?:(\d+)\s*h(?:ours?|rs?)?)?(?:\s*(\d+)\s*m(?:inutes?|ins?)?)?\b`)
 	if m := combinedPattern.FindStringSubmatchIndex(content); m != nil {
 		matchStart, matchEnd := m[0], m[1]
 		hoursIdx, minutesIdx := m[2], m[4]
