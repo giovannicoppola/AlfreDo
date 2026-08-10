@@ -41,7 +41,7 @@ func TestNeedsRefresh_StaleFile(t *testing.T) {
 	dir := t.TempDir()
 	cfg := &config.Config{
 		DataFolder:  dir,
-		RefreshRate: 0, // 0 days = always refresh
+		RefreshRate: 1,
 	}
 
 	// Create a file and backdate it
@@ -53,6 +53,23 @@ func TestNeedsRefresh_StaleFile(t *testing.T) {
 	c := NewCache(nil, cfg)
 	if !c.NeedsRefresh() {
 		t.Error("NeedsRefresh should return true when database file is stale")
+	}
+}
+
+// A refresh rate below 1 day used to make every keystroke hit the API (issue #41).
+func TestNeedsRefresh_ZeroRateFreshFile(t *testing.T) {
+	dir := t.TempDir()
+	cfg := &config.Config{
+		DataFolder:  dir,
+		RefreshRate: 0,
+	}
+
+	path := filepath.Join(dir, "allData.json")
+	os.WriteFile(path, []byte("{}"), 0644)
+
+	c := NewCache(nil, cfg)
+	if c.NeedsRefresh() {
+		t.Error("NeedsRefresh should return false for a fresh file even when RefreshRate is 0")
 	}
 }
 

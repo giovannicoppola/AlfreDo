@@ -10,7 +10,7 @@ type Config struct {
 	Token        string
 	ShowGoals    bool
 	PartialMatch bool
-	RefreshRate  int    // days between auto-refresh
+	RefreshRate  int    // days between auto-refresh (minimum 1)
 	TaskOpen     string // "app" or "browser"
 	DataFolder   string
 	DueLang      string // language for Todoist NLP dates (e.g., "en", "de")
@@ -31,7 +31,9 @@ func LoadConfig() *Config {
 
 	showGoals := envIntBool("SHOW_GOALS", true)
 	partialMatch := envIntBool("PARTIAL_MATCH", true)
-	refreshRate := envInt("RefreshRate", 1)
+	// A rate below 1 day would make every script filter keystroke hit the API,
+	// so clamp it: use the refresh keyword for an on-demand rebuild instead.
+	refreshRate := max(envInt("RefreshRate", 1), 1)
 	taskOpen := os.Getenv("taskOpen")
 	if taskOpen == "" {
 		taskOpen = "browser"

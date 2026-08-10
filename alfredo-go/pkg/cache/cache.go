@@ -57,8 +57,9 @@ func (c *Cache) NeedsRefresh() bool {
 	if err != nil {
 		return true
 	}
+	rate := max(c.cfg.RefreshRate, 1)
 	elapsed := time.Since(info.ModTime())
-	return elapsed.Hours() >= float64(c.cfg.RefreshRate*24)
+	return elapsed.Hours() >= float64(rate*24)
 }
 
 // Refresh fetches all data from the API in a single sync call and saves to disk
@@ -88,15 +89,18 @@ func (c *Cache) Refresh() error {
 		return err
 	}
 
-	// Save label and project counts
-	labelCounts := ComputeLabelCounts(c.data.Tasks, c.data.Labels)
-	if err := saveJSON(c.labelCountsPath(), labelCounts); err != nil {
-		utils.Log("warning: failed to save label counts: %v", err)
-	}
+	// Save label and project counts (paths are relative without a data folder,
+	// which would scatter files in the working directory)
+	if c.cfg.DataFolder != "" {
+		labelCounts := ComputeLabelCounts(c.data.Tasks, c.data.Labels)
+		if err := saveJSON(c.labelCountsPath(), labelCounts); err != nil {
+			utils.Log("warning: failed to save label counts: %v", err)
+		}
 
-	projectCounts := ComputeProjectCounts(c.data.Tasks, c.data.Projects, c.data.Sections)
-	if err := saveJSON(c.projectCountsPath(), projectCounts); err != nil {
-		utils.Log("warning: failed to save project counts: %v", err)
+		projectCounts := ComputeProjectCounts(c.data.Tasks, c.data.Projects, c.data.Sections)
+		if err := saveJSON(c.projectCountsPath(), projectCounts); err != nil {
+			utils.Log("warning: failed to save project counts: %v", err)
+		}
 	}
 
 	utils.Log("cache refreshed")
@@ -118,6 +122,7 @@ func (c *Cache) Load() error {
 // EnsureFresh loads from cache if fresh, otherwise refreshes
 func (c *Cache) EnsureFresh() error {
 	if c.cfg.DataFolder == "" {
+		utils.Log("warning: no data folder, fetching from the API on every run")
 		return c.Refresh()
 	}
 	if c.NeedsRefresh() {
@@ -148,6 +153,7 @@ func (c *Cache) SaveLabelCounts(counts map[string]int) error {
 
 func (c *Cache) save() error {
 	if c.cfg.DataFolder == "" {
+		utils.Log("warning: no data folder set, cache not saved")
 		return nil
 	}
 	return saveJSON(c.dbPath(), c.data)

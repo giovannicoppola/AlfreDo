@@ -2382,7 +2382,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>Recommended 0 (refresh every time) or 1 if you use  Todoist often from browser, mobile etc. Database is automatically refreshed when a task is created, completed, or rescheduled.</string>
+			<string>Minimum 1 day (lower values are treated as 1). Database is automatically refreshed when a task is created, completed, or rescheduled, and on demand with the refresh keyword.</string>
 			<key>label</key>
 			<string>Database refresh rate (days)</string>
 			<key>type</key>
@@ -2420,7 +2420,7 @@ Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</strin
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.6</string>
+	<string>0.6.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/giovannicoppola/AlfreDo</string>
 </dict>

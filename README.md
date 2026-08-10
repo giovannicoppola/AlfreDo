@@ -56,8 +56,7 @@ src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubuserc
 		5. New task (default: `!!!`)
 	- set the keyword (or hotkey) to force-refresh (default: `todoist::refresh`)
 	- set the keyword (or hotkey) to create a new task (default: `!!!`)
-	- set refresh rate (in days). Default: `1`
-		- Recommended `0` (refresh every time) or `1` if you use Todoist often from browser, mobile etc. 
+	- set refresh rate (in days). Default: `1`. Minimum: `1` (lower values are treated as `1`)
 		- Database is automatically refreshed when a task is created, completed, or rescheduled.
 		- Refresh can be forced using a keyword (default: `todoist::refresh`) or hotkey.
 	- show Karma daily and weekly goals? Default: `yes`
@@ -103,6 +102,7 @@ src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubuserc
 ## Database refresh 🔄
 - will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, rescheduled, or deleted, or...
 	- `todoist::refresh` to force database refresh
+- the refresh rate is at least 1 day: refreshing more often would make every keystroke wait for a Todoist API call. Use `todoist::refresh` whenever you need the data updated right away.
 
 
 <h1 id="known-issues">Limitations & known issues ⚠️</h1>

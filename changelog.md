@@ -1,4 +1,11 @@
 # 📓 Changelog 
+## Version 0.6.1 (Aug 2026)
+
+### bug fixes 🕷️
+- fixed the laggy typing reported in [#41](https://github.com/giovannicoppola/AlfreDo/issues/41): a refresh rate of `0` made every keystroke wait for a Todoist API call. The rate is now clamped to a minimum of 1 day — use the refresh keyword (default `todoist::refresh`) for an immediate rebuild.
+- no longer scatters `labelCounts`/`projectCounts` JSON files into the working directory when no data folder is configured
+- logs a warning when no data folder is set (the cache can't be saved, so every run hits the API)
+
 ## Version 0.4 (Feb 2024)
 
 ### New Features 💫
