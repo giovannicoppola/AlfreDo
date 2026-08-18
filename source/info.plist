@@ -1810,9 +1810,8 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 		4. Tasks with deadline (default: `!4`)
 	- set the keyword (or hotkey) to force-refresh (default: `todoist::refresh`)
 	- set the keyword (or hotkey) to create a new task (default: `!!!`)
-	- set refresh rate (in days). Default: `1`
-		- Recommended `0` (refresh every time) or `1` if you use Todoist often from browser, mobile etc. 
-		- Database is automatically refreshed when a task is created, completed, or rescheduled.
+	- set refresh rate (in days). Default: `1`. Minimum: `1` (lower values are treated as `1`)
+		- Database is automatically refreshed when a task is created, completed, rescheduled, or deleted.
 		- Refresh can be forced using a keyword (default: `todoist::refresh`) or hotkey.
 	- show Karma daily and weekly goals? Default: `yes`
 	- partial match search? Default: `yes`. Search projects and labels anywhere in the string. Will search from start if unchecked
@@ -1840,8 +1839,9 @@ Version 0.5 is a complete rewrite in Go, bringing several new features:
 - Universal Action: new highlights can be created by selecting text in any app, then launching Universal Actions and selecting `Create a new Todoist task`. 
 
 ## Database refresh 🔄
-- will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, or rescheduled, or...
+- will occur according to the rate in days set in `AlfreDo` preferences, after a task is created, completed, rescheduled, or deleted, or...
 	- `todoist::refresh` to force database refresh
+- the refresh rate is at least 1 day: refreshing more often would make every keystroke wait for a Todoist API call. Use `todoist::refresh` whenever you need the data updated right away.
 
 ## Questions? 🙋
 Report an issue [here](https://github.com/giovannicoppola/AlfreDo/issues)</string>
