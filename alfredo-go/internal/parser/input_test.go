@@ -583,3 +583,72 @@ func TestParseNewTaskInputWithDuration(t *testing.T) {
 		})
 	}
 }
+
+func TestParseNewTaskInputDescription(t *testing.T) {
+	ctx := &InputContext{
+		AllLabels:     []string{"@groceries"},
+		AllProjects:   []string{"#Work"},
+		LabelCounts:   map[string]int{"groceries": 5},
+		ProjectCounts: map[string]int{"Work": 5},
+		PartialMatch:  true,
+		Lang:          "en",
+	}
+
+	tests := []struct {
+		name                string
+		input               string
+		expectedContent     string
+		expectedDescription string
+	}{
+		{
+			name:                "text after separator",
+			input:               "buy milk // the oat one",
+			expectedContent:     "buy milk",
+			expectedDescription: "the oat one",
+		},
+		{
+			name:                "tokens in description stay literal",
+			input:               "call bank // ask about @fees #Work {friday} tomorrow",
+			expectedContent:     "call bank",
+			expectedDescription: "ask about @fees #Work {friday} tomorrow",
+		},
+		{
+			name:                "URL is not a separator",
+			input:               "read https://example.com/a//b",
+			expectedContent:     "read https://example.com/a//b",
+			expectedDescription: "",
+		},
+		{
+			name:                "only the first separator splits",
+			input:               "compare // a // b",
+			expectedContent:     "compare",
+			expectedDescription: "a // b",
+		},
+		{
+			name:                "empty description",
+			input:               "buy milk //",
+			expectedContent:     "buy milk",
+			expectedDescription: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			parsed, autocomplete, needsExit := ParseNewTaskInput(tt.input, ctx)
+			if needsExit {
+				t.Fatalf("expected no exit, got autocomplete items: %v", autocomplete)
+			}
+
+			if parsed.Content != tt.expectedContent {
+				t.Errorf("Content = %q, want %q", parsed.Content, tt.expectedContent)
+			}
+			if parsed.Description != tt.expectedDescription {
+				t.Errorf("Description = %q, want %q", parsed.Description, tt.expectedDescription)
+			}
+			if len(parsed.Labels) != 0 || parsed.ProjectName != "" || parsed.Deadline != "" || parsed.DueDate != "" {
+				t.Errorf("description leaked into task fields: labels=%v project=%q deadline=%q due=%q",
+					parsed.Labels, parsed.ProjectName, parsed.Deadline, parsed.DueDate)
+			}
+		})
+	}
+}

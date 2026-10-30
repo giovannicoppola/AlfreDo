@@ -575,10 +575,15 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 		durationStringF = fmt.Sprintf("⏱️ %dm", parsed.DurationMinutes)
 	}
 
+	var descStringF string
+	if parsed.Description != "" {
+		descStringF = "📝"
+	}
+
 	projStringF := "📋" + parsed.ProjectName
 
-	subtitle := fmt.Sprintf("%s %s %s %s %s %s %s ⇧↩️ to create",
-		projStringF, sectStringF, tagStringF, prioStringF, dueStringF, deadlineStringF, durationStringF)
+	subtitle := fmt.Sprintf("%s %s %s %s %s %s %s %s ⇧↩️ to create",
+		projStringF, sectStringF, tagStringF, prioStringF, dueStringF, deadlineStringF, durationStringF, descStringF)
 
 	output.Items = append(output.Items, alfred.OutputItem{
 		Title:    parsed.Content,
@@ -596,6 +601,7 @@ func (s *TaskService) ParseNewTask(input string) (*alfred.Output, error) {
 			"myDeadlineRaw":    parsed.DeadlineRaw,
 			"myPriority":       parsed.Priority,
 			"myDurationMinutes": parsed.DurationMinutes,
+			"myDescription":     parsed.Description,
 		},
 		Icon: &alfred.Icon{Path: "icons/newTask.png"},
 	})
@@ -628,7 +634,7 @@ func (s *TaskService) DeleteTask(taskID string) error {
 }
 
 // CreateTask creates a new task via the API
-func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string, durationMinutes int) error {
+func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDate, dueString, dueLang string, priority int, deadline, deadlineLang string, durationMinutes int, description string) error {
 	var labels []string
 	if labelsStr != "" {
 		labels = strings.Split(labelsStr, ",,..,,")
@@ -647,11 +653,15 @@ func (s *TaskService) CreateTask(content, labelsStr, projectID, sectionID, dueDa
 		dueLang = s.cfg.DueLang
 	}
 
-	// Build description from TASK_STAMP template
-	description := ""
+	// Append the TASK_STAMP template after the typed description, if any
 	if s.cfg.TaskStamp != "" {
-		description = strings.ReplaceAll(s.cfg.TaskStamp, "{timestamp}",
+		stamp := strings.ReplaceAll(s.cfg.TaskStamp, "{timestamp}",
 			time.Now().Format("Monday, January 2, 2006, 3:04:05 pm"))
+		if description != "" {
+			description += "\n\n" + stamp
+		} else {
+			description = stamp
+		}
 	}
 
 	if err := s.client.CreateTask(content, labels, projectID, sectionID, dueDate, dueString, dueLang, priority, dl, description, durationMinutes); err != nil {

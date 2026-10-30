@@ -25,6 +25,7 @@ var createCmd = &cobra.Command{
 		myDeadline := os.Getenv("myDeadline")
 		myPriorityStr := os.Getenv("myPriority")
 		myDurationMinutesStr := os.Getenv("myDurationMinutes")
+		myDescription := os.Getenv("myDescription")
 
 		priority := 1
 		if myPriorityStr != "" {
@@ -58,7 +59,7 @@ var createCmd = &cobra.Command{
 			}
 		}
 
-		err := taskService.CreateTask(taskText, taskLabels, taskProjectID, taskSectionID, myDueDate, myDueString, myDueLang, priority, myDeadline, deadlineLang, durationMinutes)
+		err := taskService.CreateTask(taskText, taskLabels, taskProjectID, taskSectionID, myDueDate, myDueString, myDueLang, priority, myDeadline, deadlineLang, durationMinutes, myDescription)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error creating task: %v\n", err)
 			fmt.Println("❌ server error\ncheck debugger")

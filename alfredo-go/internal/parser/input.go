@@ -14,6 +14,10 @@ var inputPattern = regexp.MustCompile(`\s*([@#]\([^)]+\)|\S+)\s*`)
 var deadlinePattern = regexp.MustCompile(`\{([^}]+)\}`)
 var durationPattern = regexp.MustCompile(`(?i)\bfor\s+(\d+)\s*(minutes?|mins?|m|hours?|hrs?|h)\b`)
 
+// descriptionPattern matches the " // " separator. Requiring whitespace on
+// both sides keeps URLs such as https://example.com in the task content.
+var descriptionPattern = regexp.MustCompile(`(?:^|\s)//(?:\s|$)`)
+
 // ParseInput tokenizes user input, keeping together elements with spaces if they are
 // in parentheses and preceded by # or @
 func ParseInput(input string) []string {
@@ -40,7 +44,8 @@ type ParsedTask struct {
 	DeadlineRaw     string // raw deadline text for NLP (e.g., "friday")
 	Priority        int    // Todoist API priority (4=highest, 1=lowest)
 	PrioString      string
-	DurationMinutes int // duration amount in minutes (e.g., 30)
+	DurationMinutes int    // duration amount in minutes (e.g., 30)
+	Description     string // free text after the " // " separator
 	RawInput        string
 }
 
@@ -60,12 +65,21 @@ type InputContext struct {
 func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []AutocompleteItem, bool) {
 	lang := ctx.Lang
 
+	// Split off the description first, so that @, #, {} and dates in it
+	// stay literal text
+	var description string
+	taskInput := input
+	if loc := descriptionPattern.FindStringIndex(input); loc != nil {
+		description = strings.TrimSpace(input[loc[1]:])
+		taskInput = strings.TrimSpace(input[:loc[0]])
+	}
+
 	// Extract {deadline} before tokenizing
 	var deadlineRaw string
-	cleanedInput := input
-	if m := deadlinePattern.FindStringSubmatch(input); m != nil {
+	cleanedInput := taskInput
+	if m := deadlinePattern.FindStringSubmatch(taskInput); m != nil {
 		deadlineRaw = strings.TrimSpace(m[1])
-		cleanedInput = deadlinePattern.ReplaceAllString(input, "")
+		cleanedInput = deadlinePattern.ReplaceAllString(taskInput, "")
 		cleanedInput = strings.TrimSpace(cleanedInput)
 		// collapse double spaces
 		for strings.Contains(cleanedInput, "  ") {
@@ -77,8 +91,9 @@ func ParseNewTaskInput(input string, ctx *InputContext) (*ParsedTask, []Autocomp
 	utils.Log("input elements: %v", elements)
 
 	parsed := &ParsedTask{
-		Priority: 1,
-		RawInput: input,
+		Priority:    1,
+		Description: description,
+		RawInput:    input,
 	}
 
 	// Resolve deadline
